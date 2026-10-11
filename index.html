@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en" x-data="app()" :class="{'dark':dark}">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="view-transition" content="same-origin" />
+  <meta name="description"
+    content="Abhishek Gangwar — UI/UX Designer and Frontend Developer. Information Technology Engineer at REC Mainpuri. Fast, clean and accessible digital products.">
+  <meta name="keywords" content="frontend developer, UI designer, portfolio, Tailwind CSS, Alpine.js, Abhishek Gangwar">
+  <meta name="author" content="Abhishek Gangwar">
+  <meta property="og:title" content="Abhishek Gangwar — UI/UX Designer & IT Engineer">
+  <meta property="og:description" content="I design and build digital products that people love to use.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://github.com/abhishekgangwar8936-cmd">
+  <title>Abhishek Gangwar — UI/UX & Frontend Developer</title>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23FF6B2B' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'><rect x='20' y='20' width='60' height='60' rx='12' transform='rotate(45 50 50)' /><path d='M35 63 L50 36 L65 63 M40 53h20' /></svg>">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- Lenis for smooth scrolling -->
+  <script defer src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preload" as="image" href="abhishek_pfp.png">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
+    rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { display: ['PT Sans', 'sans-serif'], body: ['DM Sans', 'sans-serif'] },
+          colors: { accent: '#FF6B2B', 'accent-light': '#FF8F5C' }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      font-family: 'DM Sans', sans-serif
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: 'PT Sans', sans-serif
+    }
+
+    body {
+      transition: background-color .8s cubic-bezier(0.25, 1, 0.5, 1), color .8s cubic-bezier(0.25, 1, 0.5, 1)
+    }
+
+    /* noise overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: .25;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E")
+    }
+
+    /* scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #FF6B2B;
+      border-radius: 99px
+    }
+
+    /* reveal on scroll */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px) scale(0.98);
+      transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+      will-change: opacity, transform;
+    }
+
+    .reveal.in {
+      opacity: 1;
+      transform: none
+    }
+
+    .d1 {
+      transition-delay: .1s
+    }
+
+    .d2 {
+      transition-delay: .2s
+    }
+
+    .d3 {
+      transition-delay: .3s
+    }
+
+    .d4 {
+      transition-delay: .4s
+    }
+
+    /* nav underline animation */
+    .nl {
+      position: relative
+    }
+
+    .nl::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1.5px;
+      background: currentColor;
+      transition: width .3s cubic-bezier(0.25, 1, 0.5, 1)
+    }
+
+    .nl:hover::after,
+    .nl.on::after {
+      width: 100%
+    }
+
+    .nl.on {
+      font-weight: 500
+    }
+
+    /* shimmer button */
+    .shimmer {
+      position: relative;
+      overflow: hidden
+    }
+
+    .shimmer::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 60%;
+      height: 100%;
+      background: rgba(255, 255, 255, .18);
+      transform: skewX(-20deg);
+      transition: left .6s cubic-bezier(0.25, 1, 0.5, 1)
+    }
+
+    .shimmer:hover::after {
+      left: 160%
+    }
+
+    /* photo frames */
+    .pf {
+      overflow: hidden;
+      background: #d4d4d8
+    }
+
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .project-card {
+      transition: transform .4s cubic-bezier(0.25, 1, 0.5, 1), border-color .3s;
+    }
+
+    .project-card:hover {
+      transform: translateY(-6px);
+    }
+
+    @keyframes wave {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    @keyframes bg-wave-down {
+      0% {
+        background-position: 0 -1200px;
+      }
+
+      100% {
+        background-position: 0 0;
+      }
+    }
+
+    @keyframes bg-wave-up {
+      0% {
+        background-position: 0 1200px;
+      }
+
+      100% {
+        background-position: 0 0;
+      }
+    }
+
+    /* ═══════════════════════════════════════════
+       PREMIUM MIRROR & GLOW SYSTEM
+       ═══════════════════════════════════════════ */
+
+    /* Avatar Mirror Reflection (Hardware-accelerated) */
+    .avatar-mirror-box {
+      -webkit-box-reflect: below 8px linear-gradient(to bottom, transparent 62%, rgba(0,0,0,0.1) 75%, rgba(255,255,255,0.2) 95%, rgba(255,255,255,0.32) 100%);
+    }
+
+    /* Fallback Mirror Reflection for non-WebKit browsers (Firefox) */
+    .avatar-mirror-replica {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      margin-top: 8px;
+      transform: scaleY(-1);
+      transform-origin: top;
+      opacity: 0.28;
+      filter: blur(1.5px);
+      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 28%, transparent 62%);
+      mask-image: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 28%, transparent 62%);
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    @supports (-webkit-box-reflect: below 1px linear-gradient(transparent, transparent)) {
+      .avatar-mirror-replica {
+        display: none;
+      }
+    }
+
+    /* Mirror Floor Ambient Glow Pool */
+    .avatar-floor-glow {
+      position: absolute;
+      bottom: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 82%;
+      height: 24px;
+      background: radial-gradient(ellipse at center, rgba(255, 107, 43, 0.42) 0%, rgba(59, 130, 246, 0.3) 45%, transparent 75%);
+      filter: blur(12px);
+      border-radius: 9999px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Mirror Glass Card Architecture */
+    .mirror-card {
+      position: relative;
+      background: rgba(38, 42, 50, 0.55);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+      transition: transform .4s cubic-bezier(0.22, 1, 0.36, 1), 
+                  border-color .35s ease, 
+                  box-shadow .4s cubic-bezier(0.22, 1, 0.36, 1),
+                  background-color .35s ease;
+      overflow: hidden;
+      will-change: transform, box-shadow;
+    }
+
+    html:not(.dark) .mirror-card {
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-top: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.06), inset 0 1px 0 0 rgba(255, 255, 255, 0.85);
+    }
+
+    /* Ambient Mirror Surface Sheen */
+    .mirror-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.015) 35%, transparent 65%);
+      pointer-events: none;
+      border-radius: inherit;
+      transition: opacity .4s ease;
+      opacity: 0.75;
+      z-index: 1;
+    }
+
+    /* Specular Light Reflection Sweep on Hover */
+    .mirror-card::after {
+      content: '';
+      position: absolute;
+      top: -60%;
+      left: -60%;
+      width: 220%;
+      height: 220%;
+      background: linear-gradient(60deg, transparent 40%, rgba(255, 255, 255, 0.08) 47%, rgba(255, 107, 43, 0.16) 50%, rgba(59, 130, 246, 0.12) 53%, transparent 60%);
+      transform: rotate(25deg) translateY(-100%);
+      transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .mirror-card:hover::after {
+      transform: rotate(25deg) translateY(100%);
+    }
+
+    .mirror-card:hover {
+      transform: translateY(-6px) scale(1.01);
+      border-color: rgba(255, 107, 43, 0.65);
+      border-top-color: rgba(255, 143, 92, 0.9);
+      box-shadow: 0 22px 50px -10px rgba(0, 0, 0, 0.85), 
+                  0 0 30px 2px rgba(255, 107, 43, 0.28), 
+                  inset 0 1px 0 0 rgba(255, 255, 255, 0.35);
+    }
+
+    /* Legacy card-h support with enriched glow */
+    .card-h {
+      transition: transform .4s cubic-bezier(0.22, 1, 0.36, 1), border-color .3s, box-shadow .4s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform, box-shadow;
+    }
+
+    .card-h:hover {
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.8), 0 0 28px 2px rgba(255, 107, 43, 0.26);
+    }
+
+    /* Mirror Project Thumbnail Sheen */
+    .project-mirror-img {
+      position: relative;
+    }
+    .project-mirror-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 0%, transparent 40%, rgba(18, 18, 18, 0.6) 100%);
+      pointer-events: none;
+    }
+
+    /* Glowing Pulse Aura */
+    @keyframes aura-pulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.55;
+      }
+      50% {
+        transform: scale(1.06);
+        opacity: 0.85;
+      }
+    }
+    .aura-pulse {
+      animation: aura-pulse 4s ease-in-out infinite;
+    }
+
+    /* skill tag */
+    .stag {
+      transition: border-color .18s
+    }
+
+    [x-cloak] {
+      display: none !important
+    }
+
+    @keyframes scroll-down {
+      0% {
+        transform: translateY(-50%);
+      }
+
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes scroll-up {
+      0% {
+        transform: translateY(0);
+      }
+
+      100% {
+        transform: translateY(-50%);
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-transparent text-black dark:text-white antialiased relative overflow-hidden h-screen"
+  id="body-container">
+  <div class="fixed inset-0 bg-zinc-50 dark:bg-black -z-50 pointer-events-none"></div>
+  <!-- Entrance Overlay -->
+  <div id="entrance-overlay"
+    class="fixed inset-0 z-[9999] flex items-center justify-center bg-zinc-50 dark:bg-black transition-opacity duration-1000 ease-in-out">
+    <div class="absolute inset-0 bg-accent/10 rounded-full blur-[120px] scale-150 pointer-events-none"></div>
+    <div class="flex items-center relative z-10" id="entrance-content">
+
+      <!-- Logo Container (Solid background to mask the text sliding from behind) -->
+      <div class="relative z-20 bg-zinc-50 dark:bg-black rounded-2xl pr-1">
+        <svg viewBox="0 0 100 100"
+          class="w-12 h-12 md:w-16 md:h-16 text-accent transition-all duration-[700ms] ease-out opacity-0 scale-50"
+          id="entrance-logo" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"
+          stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="20" width="60" height="60" rx="12" transform="rotate(45 50 50)" />
+          <path d="M35 63 L50 36 L65 63 M40 53h20" />
+        </svg>
+      </div>
+
+      <!-- Name Container (Clipping mask) -->
+      <div class="overflow-hidden relative z-10 flex items-center">
+        <!-- Text slides from -100% to 0 -->
+        <div id="entrance-name"
+          class="pl-3 font-display font-bold text-2xl md:text-3xl tracking-tight text-black dark:text-white transition-all duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] opacity-0 -translate-x-full">
+          Abhishek Gangwar
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- Scroll Sequence Background -->
+  <canvas id="scroll-seq-bg"
+    class="hidden md:block fixed inset-0 w-full h-full pointer-events-none -z-10 opacity-80 dark:opacity-60 blur-lg scale-110"
+    style="will-change: transform;"></canvas>
+
+  <!-- Interactive 3D WebGL Background (Fluid Gradient) -->
+  <canvas id="webgl-canvas" class="fixed inset-0 w-full h-full -z-30 pointer-events-none"
+    style="view-transition-name: wave-container; will-change: transform;"></canvas>
+  <script type="module" src="./webgl-bg.js"></script>
+
+
+  <!-- ═══ NAV ═══ -->
+  <header class="fixed inset-x-0 top-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
+    :class="sc?'bg-white/60 dark:bg-black/60 backdrop-blur-2xl shadow-sm shadow-black/5':''">
+    <nav class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between" aria-label="Main navigation">
+
+      <a href="#hero"
+        class="flex items-center gap-2.5 font-display font-bold text-xl tracking-tight relative z-10 group">
+        <svg viewBox="0 0 100 100"
+          class="w-8 h-8 text-accent shrink-0 group-hover:rotate-90 transition-transform duration-500" fill="none"
+          stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"
+          xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="20" width="60" height="60" rx="12" transform="rotate(45 50 50)" />
+          <path d="M35 63 L50 36 L65 63 M40 53h20" />
+        </svg>
+        <span><span class="text-black dark:text-white">Abhishek Gangwar</span><span class="text-accent">.</span></span>
+      </a>
+
+      <ul class="hidden md:flex items-center gap-8 text-sm" role="list">
+        <li><a href="#services"
+            class="nl text-black dark:text-white hover:text-black dark:hover:text-white transition-colors"
+            :class="s==='services'?'on !text-black dark:!text-white':''">Services</a></li>
+        <li><a href="#work"
+            class="nl text-black dark:text-white hover:text-black dark:hover:text-white transition-colors"
+            :class="s==='work'?'on !text-black dark:!text-white':''">Work</a></li>
+        <li><a href="#about"
+            class="nl text-black dark:text-white hover:text-black dark:hover:text-white transition-colors"
+            :class="s==='about'?'on !text-black dark:!text-white':''">About</a></li>
+
+        <li><a href="#contact"
+            class="nl text-black dark:text-white hover:text-black dark:hover:text-white transition-colors"
+            :class="s==='contact'?'on !text-black dark:!text-white':''">Contact</a></li>
+      </ul>
+
+      <div class="flex items-center gap-3">
+        <!-- dark toggle -->
+        <button @click="dark=!dark"
+          class="w-9 h-9 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+          :aria-label="dark?'Light mode':'Dark mode'">
+          <svg x-show="!dark" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+          </svg>
+          <svg x-show="dark" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+          </svg>
+        </button>
+        <!-- hire me -->
+        <a href="#contact"
+          class="hover:-translate-y-1 hover:shadow-xl hover:shadow-accent/30 transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] hidden md:inline-flex items-center gap-2 shimmer bg-accent text-white text-sm font-medium px-5 py-2 rounded-full hover:bg-accent-light border-t border-white/25">
+          Hire me <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+        <!-- hamburger -->
+        <button @click="mm=!mm"
+          class="md:hidden w-9 h-9 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800"
+          :aria-expanded="mm" aria-label="Toggle menu">
+          <svg x-show="!mm" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg x-show="mm" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- mobile menu -->
+    <div x-show="mm" x-cloak x-transition:enter="transition ease-out duration-500"
+      x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+      x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 translate-y-0"
+      x-transition:leave-end="opacity-0 -translate-y-2"
+      class="md:hidden bg-white dark:bg-black border-t border-zinc-100 dark:border-zinc-950">
+      <ul class="flex flex-col px-4 sm:px-6 py-5 gap-4 text-sm font-medium" role="list">
+        <li><a href="#services" @click="mm=false"
+            class="block text-black dark:text-white hover:text-accent transition-all duration-400">Services</a></li>
+        <li><a href="#work" @click="mm=false"
+            class="block text-black dark:text-white hover:text-accent transition-all duration-400">Work</a></li>
+        <li><a href="#about" @click="mm=false"
+            class="block text-black dark:text-white hover:text-accent transition-all duration-400">About</a></li>
+
+        <li><a href="#contact" @click="mm=false"
+            class="block text-black dark:text-white hover:text-accent transition-all duration-400">Contact</a></li>
+        <li class="pt-2 border-t border-zinc-100 dark:border-zinc-950">
+          <a href="#contact" @click="mm=false"
+            class="inline-flex shimmer bg-accent text-white font-medium text-sm px-5 py-2.5 rounded-full">Hire me →</a>
+        </li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <!-- ═══ HERO ═══ -->
+    <section id="hero" class="relative min-h-[100dvh] flex items-center pt-16 overflow-hidden">
+      <div class="absolute top-1/4 right-0 w-96 h-96 bg-accent/30 rounded-full blur-[100px] pointer-events-none z-0"
+        aria-hidden="true"></div>
+      <div
+        class="absolute bottom-1/4 left-0 w-64 h-64 bg-blue-500/20 dark:bg-zinc-900/40 rounded-full blur-[100px] pointer-events-none z-0"
+        aria-hidden="true"></div>
+
+      <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-24 w-full">
+        <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-12">
+
+
+          <div class="max-w-2xl">
+            <p class="reveal text-sm font-medium text-accent tracking-widest uppercase mb-4">Available for work</p>
+            <h1
+              class="text-accent reveal d1 font-display font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight mb-6">
+              Hi, I'm <span class="text-accent">Abhishek</span>
+            </h1>
+            <p
+              class="reveal d2 text-lg md:text-xl text-black dark:text-white font-light leading-relaxed max-w-md mb-10">
+              <strong class="text-accent font-medium  ">UI/UX Designer &amp; Frontend
+                Developer</strong> based in India. B. Tech Information Technology engineer creating fast, clean, and accessible digital products.
+            </p>
+            <div class="reveal d3 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+              <a href="#work"
+                class="hover:-translate-y-1 hover:shadow-xl hover:shadow-accent/30 transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] shimmer inline-flex justify-center items-center gap-2 bg-zinc-900 dark:bg-white text-white dark:text-black font-medium px-7 py-3.5 rounded-full hover:bg-zinc-700 dark:hover:bg-zinc-200 text-sm w-full sm:w-auto border-t border-white/20">
+                View my work
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </a>
+              <a href="#contact"
+                class="hover:-translate-y-1 hover:shadow-xl hover:shadow-accent/20 transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] inline-flex justify-center items-center gap-2 border border-zinc-300 dark:border-zinc-800 text-black dark:text-white font-medium px-7 py-3.5 rounded-full hover:bg-zinc-50 dark:hover:bg-zinc-900 text-sm w-full sm:w-auto">Get
+                in touch</a>
+            </div>
+            <div class="reveal d4 flex gap-6 sm:gap-8 mt-10 sm:mt-14 pt-6 sm:pt-8 border-t border-zinc-200/50 dark:border-zinc-800/50">
+              <div>
+                <p class="font-display font-bold text-3xl text-black dark:text-white">4+</p>
+                <p class="text-xs text-black dark:text-white mt-1">Projects done</p>
+              </div>
+              <div>
+                <p class="font-display font-bold text-3xl text-black dark:text-white">1y</p>
+                <p class="text-xs text-black dark:text-white mt-1">Experience</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="reveal d2 shrink-0 relative flex justify-center md:justify-end w-full md:w-auto">
+            <div class="relative w-56 h-56 sm:w-64 sm:h-64 md:w-[22rem] md:h-[22rem] mt-8 md:mt-0 group">
+              <!-- Animated gradient glow behind (exact Piyush signature glow aura) -->
+              <div
+                class="absolute inset-0 bg-gradient-to-tr from-accent via-orange-400 to-blue-500 rounded-full blur-2xl -z-10 aura-pulse opacity-60 dark:opacity-50">
+              </div>
+
+              <!-- Mirror floor ambient glow pool -->
+              <div class="avatar-floor-glow"></div>
+
+              <!-- Gradient border wrapper with Mirror Reflection -->
+              <div
+                class="w-full h-full rounded-full p-[3px] bg-gradient-to-tr from-accent via-orange-400 to-blue-500 shadow-2xl shadow-accent/25 avatar-mirror-box relative z-10">
+                <!-- Inner container to hold image -->
+                <div class="w-full h-full rounded-full overflow-hidden bg-white dark:bg-black relative">
+                  <!-- Specular mirror highlight arc -->
+                  <div class="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-black/20 pointer-events-none z-10 rounded-full"></div>
+                  <img src="abhishek_pfp.png" alt="Abhishek Gangwar" fetchpriority="high"
+                    class="w-full h-full object-cover object-[50%_10%] transform group-hover:scale-105 transition-all duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]" />
+                </div>
+              </div>
+
+              <!-- Mirror reflection floor replica (seamless cross-browser fallback) -->
+              <div class="avatar-mirror-replica pointer-events-none select-none" aria-hidden="true">
+                <div class="w-full h-full rounded-full p-[3px] bg-gradient-to-tr from-accent/50 via-orange-400/40 to-blue-500/40">
+                  <div class="w-full h-full rounded-full overflow-hidden bg-black/60">
+                    <img src="abhishek_pfp.png" alt="" class="w-full h-full object-cover object-[50%_10%]" />
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SERVICES ═══ -->
+    <section id="services" class="py-16 md:py-20 lg:py-24 relative z-10">
+      <!-- Ambient Glow Blobs -->
+      <div class="absolute top-1/2 left-0 w-80 h-80 bg-accent/15 rounded-full blur-[110px] pointer-events-none -z-10" aria-hidden="true"></div>
+      <div class="absolute bottom-0 right-0 w-80 h-80 bg-blue-500/15 rounded-full blur-[110px] pointer-events-none -z-10" aria-hidden="true"></div>
+
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="mb-14">
+          <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">What I do</p>
+          <h2 class="text-accent reveal d1 font-display font-bold text-3xl sm:text-4xl md:text-5xl ">Services</h2>
+        </div>
+        <div class="grid md:grid-cols-3 gap-6">
+
+          <article
+            class="reveal d1 mirror-card group rounded-3xl p-8">
+            <div
+              class="w-12 h-12 flex items-center justify-center bg-orange-500/10 dark:bg-zinc-900/80 border border-accent/20 rounded-xl mb-6 group-hover:bg-accent/20 group-hover:scale-105 transition-all duration-400">
+              <svg class="w-6 h-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2" />
+              </svg>
+            </div>
+            <h3 class="text-accent font-display font-bold text-xl mb-3">UI/UX Design</h3>
+            <p class="text-sm text-black dark:text-white leading-relaxed">From wireframes to polished
+              Figma
+              prototypes. Intuitive, visually compelling interfaces that convert visitors into users and put usability
+              first.</p>
+          </article>
+
+          <article
+            class="reveal d2 mirror-card group rounded-3xl p-8">
+            <div
+              class="w-12 h-12 flex items-center justify-center bg-blue-500/10 dark:bg-zinc-900/80 border border-blue-500/20 rounded-xl mb-6 group-hover:bg-blue-500/25 group-hover:scale-105 transition-all duration-400">
+              <svg class="w-6 h-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+              </svg>
+            </div>
+            <h3 class="text-accent font-display font-bold text-xl mb-3">Frontend Dev</h3>
+            <p class="text-sm text-black dark:text-white leading-relaxed">Production-grade code with Tailwind CSS and
+              Alpine.js.
+              Pixel-perfect, fully responsive, SEO-friendly and blazing fast — no bloat, no heavy frameworks.</p>
+          </article>
+
+          <article
+            class="reveal d3 mirror-card group rounded-3xl p-8">
+            <div
+              class="w-12 h-12 flex items-center justify-center bg-orange-500/10 dark:bg-zinc-900/80 border border-accent/20 rounded-xl mb-6 group-hover:bg-accent/20 group-hover:scale-105 transition-all duration-400">
+              <svg class="w-6 h-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+              </svg>
+            </div>
+            <h3 class="text-accent font-display font-bold text-xl mb-3">Landing Pages</h3>
+            <p class="text-sm text-black dark:text-white leading-relaxed">High-converting pages for
+              SaaS, apps and
+              personal brands. Designed to communicate value instantly and drive action from the first scroll.</p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ WORK ═══ -->
+    <section id="work" class="py-16 md:py-20 lg:py-24 relative z-10">
+      <!-- Ambient Glow Blobs -->
+      <div class="absolute top-1/4 right-0 w-96 h-96 bg-accent/15 rounded-full blur-[120px] pointer-events-none -z-10" aria-hidden="true"></div>
+      <div class="absolute bottom-1/4 left-0 w-96 h-96 bg-blue-500/15 rounded-full blur-[120px] pointer-events-none -z-10" aria-hidden="true"></div>
+
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-14">
+          <div>
+            <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">Portfolio</p>
+            <h2 class="text-accent reveal d1 font-display font-bold text-3xl sm:text-4xl md:text-5xl ">Selected
+              work</h2>
+          </div>
+          <a href="projects.html"
+            class="hover:scale-105 transition-all duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] reveal d1 text-sm font-medium text-black dark:text-white hover:text-accent self-start sm:self-auto nl">All
+            projects →</a>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+
+          <article
+            class="reveal d1 mirror-card group rounded-3xl overflow-hidden">
+            <div class="pf w-full h-56 overflow-hidden project-mirror-img">
+              <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=60"
+                alt="Data Analytics Dashboard" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span
+                  class="text-xs bg-orange-500/10 dark:bg-zinc-900 text-accent border border-orange-500/30 dark:border-zinc-800 px-3 py-1 rounded-full">Data</span>
+                <span
+                  class="text-xs bg-zinc-200 dark:bg-zinc-900 text-black dark:text-white px-3 py-1 rounded-full">Dashboard</span>
+              </div>
+              <a href="javascript:void(0)" class="cursor-default">
+                <h3 class="text-accent font-display font-bold text-xl mb-1.5">Data Analytics Dashboard
+                </h3>
+              </a>
+              <p class="text-sm text-black dark:text-white leading-relaxed mb-4">A comprehensive data
+                analytics
+                dashboard offering deep insights, data visualization, and real-time metrics tracking.</p>
+            </div>
+          </article>
+
+          <article
+            class="reveal d2 mirror-card group rounded-3xl overflow-hidden">
+            <div class="pf w-full h-56 overflow-hidden project-mirror-img">
+              <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=600&q=60"
+                alt="Interactive Portfolio" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span
+                  class="text-xs bg-orange-500/10 dark:bg-zinc-900 text-accent border border-orange-500/30 dark:border-zinc-800 px-3 py-1 rounded-full">Web</span>
+                <span
+                  class="text-xs bg-zinc-200 dark:bg-zinc-900 text-black dark:text-white px-3 py-1 rounded-full">Portfolio</span>
+              </div>
+              <a href="javascript:void(0)" class="cursor-default">
+                <h3 class="text-accent font-display font-bold text-xl mb-1.5">Interactive Portfolio
+                </h3>
+              </a>
+              <p class="text-sm text-black dark:text-white leading-relaxed mb-4">A dynamic, responsive,
+                and
+                minimalist interactive portfolio to elegantly showcase digital projects and skills.</p>
+            </div>
+          </article>
+
+          <article
+            class="reveal d3 mirror-card group rounded-3xl overflow-hidden">
+            <a href="todo.html" target="_blank" rel="noopener noreferrer" class="block pf w-full h-56 overflow-hidden project-mirror-img">
+              <img src="assets/images/todo-planner.png"
+                alt="My Todo — Daily Planner Live App" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            </a>
+            <div class="p-6">
+              <div class="flex flex-wrap items-center gap-2 mb-3">
+                <span
+                  class="text-xs bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-3 py-1 rounded-full font-semibold flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live App
+                </span>
+                <span
+                  class="text-xs bg-orange-500/10 dark:bg-zinc-900 text-accent border border-orange-500/30 dark:border-zinc-800 px-3 py-1 rounded-full">App</span>
+                <span
+                  class="text-xs bg-zinc-200 dark:bg-zinc-900 text-black dark:text-white px-3 py-1 rounded-full">Productivity</span>
+              </div>
+              <a href="todo.html" target="_blank" rel="noopener noreferrer">
+                <h3 class="text-accent font-display font-bold text-xl mb-1.5 hover:underline">My Todo — Daily Planner</h3>
+              </a>
+              <p class="text-sm text-black dark:text-white leading-relaxed mb-4">A minimalist, Material-inspired daily task planner & to-do web app with reminders, category priority tags, and smart productivity tracking.</p>
+              <a href="todo.html" target="_blank" rel="noopener noreferrer"
+                class="hover:scale-105 transition-all duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] inline-flex items-center gap-1.5 text-sm font-medium text-black dark:text-white nl">View
+                project →</a>
+            </div>
+          </article>
+
+          <article
+            class="reveal d4 mirror-card group rounded-3xl overflow-hidden">
+            <div class="pf w-full h-56 project-mirror-img overflow-hidden">
+              <img src="assets/images/price-comparison.jpg"
+                alt="Price Comparison Live Web App" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap items-center gap-2 mb-3">
+                <span
+                  class="text-xs bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-3 py-1 rounded-full font-semibold flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live App
+                </span>
+                <span
+                  class="text-xs bg-orange-500/10 dark:bg-zinc-900 text-accent border border-orange-500/30 dark:border-zinc-800 px-3 py-1 rounded-full">E-Commerce</span>
+                <span
+                  class="text-xs bg-zinc-200 dark:bg-zinc-900 text-black dark:text-white px-3 py-1 rounded-full">Deal Finder</span>
+              </div>
+              <a href="sastakhareedo.html" target="_blank" rel="noopener noreferrer">
+                <h3 class="text-accent font-display font-bold text-xl mb-1.5 hover:underline">SastaKhareedo — Price Comparison & Deals</h3>
+              </a>
+              <p class="text-sm text-black dark:text-white leading-relaxed mb-4">Compares real-time prices across Amazon, Flipkart, Croma & Reliance Digital to find the cheapest deals and maximize savings.</p>
+              <a href="sastakhareedo.html" target="_blank" rel="noopener noreferrer"
+                class="hover:scale-105 transition-all duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] inline-flex items-center gap-1.5 text-sm font-medium text-black dark:text-white nl">View
+                project →</a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ ABOUT ═══ -->
+    <section id="about" class="py-16 md:py-20 lg:py-24 relative z-10">
+      <!-- Ambient Glow Blobs -->
+      <div class="absolute top-1/2 right-10 w-80 h-80 bg-accent/15 rounded-full blur-[110px] pointer-events-none -z-10" aria-hidden="true"></div>
+      <div class="absolute bottom-10 left-10 w-80 h-80 bg-blue-500/15 rounded-full blur-[110px] pointer-events-none -z-10" aria-hidden="true"></div>
+
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+          <div class="reveal order-2 md:order-1 flex justify-center md:justify-start">
+            <div class="relative w-56 h-56 sm:w-64 sm:h-64 md:w-[22rem] md:h-[22rem] group rounded-full">
+              <!-- Animated gradient glow behind (exact Piyush signature glow aura) -->
+              <div
+                class="absolute inset-0 bg-gradient-to-tr from-accent via-orange-400 to-blue-500 rounded-full blur-2xl -z-10 aura-pulse opacity-60 dark:opacity-50">
+              </div>
+
+              <!-- Mirror floor ambient glow pool -->
+              <div class="avatar-floor-glow"></div>
+
+              <!-- Gradient border wrapper with Mirror Reflection -->
+              <div
+                class="w-full h-full rounded-full p-[3px] bg-gradient-to-tr from-accent via-orange-400 to-blue-500 shadow-2xl shadow-accent/25 avatar-mirror-box relative z-10">
+                <div class="w-full h-full rounded-full overflow-hidden bg-white dark:bg-black relative">
+                  <!-- Specular mirror highlight arc -->
+                  <div class="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-black/20 pointer-events-none z-10 rounded-full"></div>
+                  <img src="abhishek_pfp.png" alt="Abhishek Gangwar" loading="lazy"
+                    class="object-cover object-[50%_10%] h-full w-full transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105">
+                </div>
+              </div>
+
+              <!-- Mirror reflection floor replica (seamless cross-browser fallback) -->
+              <div class="avatar-mirror-replica pointer-events-none select-none" aria-hidden="true">
+                <div class="w-full h-full rounded-full p-[3px] bg-gradient-to-tr from-accent/50 via-orange-400/40 to-blue-500/40">
+                  <div class="w-full h-full rounded-full overflow-hidden bg-black/60">
+                    <img src="abhishek_pfp.png" alt="" class="object-cover object-[50%_10%] h-full w-full" />
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="order-1 md:order-2">
+            <p class="reveal text-xs font-bold text-black dark:text-white tracking-widest uppercase mb-3">About
+              me</p>
+            <h2 class="text-accent reveal d1 font-display font-bold text-3xl sm:text-4xl md:text-5xl leading-tight mb-6">
+              A bit about<br>who I am</h2>
+            <p class="reveal d2 text-black dark:text-white font-medium leading-relaxed mb-4">
+              Hello, I am Abhishek Gangwar, a passionate Information Technology Engineering student @Lokmata Devi Ahilyabai Holkar Rajkiya Engineering College Mainpuri (Session 2025–2029). Driven by curiosity and a love for building digital products, I enjoy exploring the intersection of modern software development, frontend engineering, and creative technology.
+            </p>
+            <p class="reveal d3 text-black dark:text-white font-medium leading-relaxed mb-8">
+              Whether I am writing clean code, engineering logic to solve complex problems, or crafting high-performance web applications, I am constantly pushing myself to learn and adapt. Beyond the screen, I believe that balancing technical logic with creative design is what makes building for the web truly exciting.
+            </p>
+            <div class="reveal d4 pt-6 border-t border-zinc-200 dark:border-zinc-800/50">
+              <p class="text-xs font-bold text-black dark:text-white uppercase tracking-widest mb-4">Stack &amp;
+                tools</p>
+              <div class="flex flex-wrap gap-2" role="list" aria-label="Skills">
+                <span role="listitem"
+                  class="stag text-sm bg-white dark:bg-zinc-900/60 backdrop-blur-md border border-zinc-200 dark:border-zinc-800/50 text-black dark:text-white px-4 py-1.5 rounded-full hover:border-accent hover:text-accent transition-all duration-400">Information
+                  Technology</span>
+                <span role="listitem"
+                  class="stag text-sm bg-white dark:bg-zinc-900/60 backdrop-blur-md border border-zinc-200 dark:border-zinc-800/50 text-black dark:text-white px-4 py-1.5 rounded-full hover:border-accent hover:text-accent transition-all duration-400">Web
+                  Development</span>
+                <span role="listitem"
+                  class="stag text-sm bg-white dark:bg-zinc-900/60 backdrop-blur-md border border-zinc-200 dark:border-zinc-800/50 text-black dark:text-white px-4 py-1.5 rounded-full hover:border-accent hover:text-accent transition-all duration-400">Python</span>
+                <span role="listitem"
+                  class="stag text-sm bg-white dark:bg-zinc-900/60 backdrop-blur-md border border-zinc-200 dark:border-zinc-800/50 text-black dark:text-white px-4 py-1.5 rounded-full hover:border-accent hover:text-accent transition-all duration-400">C</span>
+                <span role="listitem"
+                  class="stag text-sm bg-white dark:bg-zinc-900/60 backdrop-blur-md border border-zinc-200 dark:border-zinc-800/50 text-black dark:text-white px-4 py-1.5 rounded-full hover:border-accent hover:text-accent transition-all duration-400">C++</span>
+                <span role="listitem"
+                  class="stag text-sm bg-white dark:bg-zinc-900/60 backdrop-blur-md border border-zinc-200 dark:border-zinc-800/50 text-black dark:text-white px-4 py-1.5 rounded-full hover:border-accent hover:text-accent transition-all duration-400">git
+                  & github</span>
+                <span role="listitem"
+                  class="stag text-sm bg-white dark:bg-zinc-900/60 backdrop-blur-md border border-zinc-200 dark:border-zinc-800/50 text-black dark:text-white px-4 py-1.5 rounded-full hover:border-accent hover:text-accent transition-all duration-400">ui
+                  & ux design</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ KEY HIGHLIGHTS ═══ -->
+    <section id="highlights"
+      class="py-16 md:py-20 lg:py-24 relative z-10 border-t border-zinc-100 dark:border-zinc-950/50">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="mb-14">
+          <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">Snapshot</p>
+          <h2 class="text-accent reveal d1 font-display font-bold text-3xl sm:text-4xl md:text-5xl ">Key Highlights
+          </h2>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+
+          <!-- Education -->
+          <article
+            class="reveal d1 mirror-card group rounded-3xl p-8">
+            <h3 class="text-accent font-display font-bold text-xl mb-3">Education</h3>
+            <p class="text-sm text-black dark:text-white leading-relaxed">Pursuing B. Tech in Information Technology (Session 2025–2029) at Lokmata Devi Ahilyabai Holkar Rajkiya Engineering College Mainpuri (U.P.).</p>
+          </article>
+
+          <!-- Core Skills -->
+          <article
+            class="reveal d2 mirror-card group rounded-3xl p-8">
+            <h3 class="text-accent font-display font-bold text-xl mb-3">Core Skills</h3>
+            <p class="text-sm text-black dark:text-white leading-relaxed">Proficiency in C, C++, and
+              Python,
+              problem-solving, algorithmic logic, and modern web development.</p>
+          </article>
+
+          <!-- Interests -->
+          <article
+            class="reveal d3 mirror-card group rounded-3xl p-8">
+            <h3 class="text-accent font-display font-bold text-xl mb-3">Interests</h3>
+            <p class="text-sm text-black dark:text-white leading-relaxed">Information technology,
+              software
+              engineering, modern web development, and digital system design.</p>
+          </article>
+
+          <!-- Mindset -->
+          <article
+            class="reveal d4 mirror-card group rounded-3xl p-8">
+            <h3 class="text-accent font-display font-bold text-xl mb-3">Mindset</h3>
+            <p class="text-sm text-black dark:text-white leading-relaxed">A continuous learner eager to
+              turn
+              abstract ideas into functional, elegant web applications and software.</p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ CONTACT ═══ -->
+    <section id="contact" class="py-16 md:py-20 lg:py-24 relative z-10">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div
+          class="bg-zinc-900/70 dark:bg-zinc-900/70 backdrop-blur-2xl border border-zinc-700/50 rounded-3xl p-6 sm:p-10 md:p-16 relative overflow-hidden shadow-2xl">
+          <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl pointer-events-none"
+            aria-hidden="true"></div>
+          <div class="absolute bottom-0 left-0 w-40 h-40 bg-accent/10 rounded-full blur-2xl pointer-events-none"
+            aria-hidden="true"></div>
+
+          <div class="relative z-10 grid md:grid-cols-2 gap-12 items-start">
+
+            <div>
+              <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">Get in touch</p>
+              <h2 class="text-accent reveal d1 font-display font-bold text-3xl sm:text-4xl md:text-5xl leading-tight mb-5">Let's
+                work<br>together</h2>
+              <p class="reveal d2 text-zinc-300 leading-relaxed mb-8">I'm open to UI/UX and frontend missions, short or
+                long-term. Landing page, full product redesign, or just a second pair of eyes — let's talk.</p>
+
+              <div class="reveal d3 flex flex-col gap-4">
+                <a href="mailto:abhishekgangwar8936@gmail.com"
+                  onclick="window.open('https://mail.google.com/mail/?view=cm&fs=1&to=abhishekgangwar8936@gmail.com', '_blank');"
+                  target="_blank" rel="noopener noreferrer"
+                  class="group flex items-center gap-3 text-zinc-300 hover:text-white transition-all duration-400 cursor-pointer">
+                  <span
+                    class="w-9 h-9 flex items-center justify-center bg-zinc-800 rounded-lg group-hover:bg-accent/20 group-hover:scale-105 transition-all duration-400 shrink-0">
+                    <svg class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </span>
+                  <span class="text-sm group-hover:text-accent transition-colors duration-300">abhishekgangwar8936@gmail.com</span>
+                </a>
+                <a href="https://www.linkedin.com/in/abhishek-gangwar" rel="noopener noreferrer" target="_blank"
+                  class="group flex items-center gap-3 text-zinc-300 hover:text-white transition-all duration-400 cursor-pointer">
+                  <span
+                    class="w-9 h-9 flex items-center justify-center bg-zinc-800 rounded-lg group-hover:bg-accent/20 group-hover:scale-105 transition-all duration-400 shrink-0">
+                    <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path
+                        d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                    </svg>
+                  </span>
+                  <span class="text-sm group-hover:text-accent transition-colors duration-300">linkedin.com/in/abhishek-gangwar</span>
+                </a>
+                <a href="https://github.com/abhishekgangwar8936-cmd" rel="noopener noreferrer" target="_blank"
+                  class="group flex items-center gap-3 text-zinc-300 hover:text-white transition-all duration-400 cursor-pointer">
+                  <span
+                    class="w-9 h-9 flex items-center justify-center bg-zinc-800 rounded-lg group-hover:bg-accent/20 group-hover:scale-105 transition-all duration-400 shrink-0">
+                    <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path
+                        d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                    </svg>
+                  </span>
+                  <span class="text-sm group-hover:text-accent transition-colors duration-300">github.com/abhishekgangwar8936-cmd</span>
+                </a>
+                <a href="https://www.instagram.com/__abhishek_gangwar__" rel="noopener noreferrer" target="_blank"
+                  class="group flex items-center gap-3 text-zinc-300 hover:text-white transition-all duration-400 cursor-pointer">
+                  <span
+                    class="w-9 h-9 flex items-center justify-center bg-zinc-800 rounded-lg group-hover:bg-accent/20 group-hover:scale-105 transition-all duration-400 shrink-0">
+                    <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path
+                        d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.162c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                    </svg>
+                  </span>
+                  <span class="text-sm group-hover:text-accent transition-colors duration-300">instagram.com/__abhishek_gangwar__</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="reveal d2">
+              <form onsubmit="handleContactSubmit(event)">
+                <div class="flex flex-col gap-4">
+                  <div class="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <label for="fname" class="block text-xs font-medium text-zinc-300 mb-1.5">Name <span
+                          aria-hidden="true">*</span></label>
+                      <input type="text" id="fname" name="name" placeholder="Jane Smith" required autocomplete="name"
+                        class="w-full bg-zinc-800 border border-zinc-700 text-white text-sm rounded-xl px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-accent transition-all duration-400">
+                    </div>
+                    <div>
+                      <label for="femail" class="block text-xs font-medium text-zinc-300 mb-1.5">Email <span
+                          aria-hidden="true">*</span></label>
+                      <input type="email" id="femail" name="email" placeholder="jane@company.com" required
+                        autocomplete="email"
+                        class="w-full bg-zinc-800 border border-zinc-700 text-white text-sm rounded-xl px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-accent transition-all duration-400">
+                    </div>
+                  </div>
+                  <div>
+                    <label for="fsubject" class="block text-xs font-medium text-zinc-300 mb-1.5">Subject</label>
+                    <input type="text" id="fsubject" name="subject" placeholder="Project inquiry"
+                      class="w-full bg-zinc-800 border border-zinc-700 text-white text-sm rounded-xl px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-accent transition-all duration-400">
+                  </div>
+                  <div>
+                    <label for="fmessage" class="block text-xs font-medium text-zinc-300 mb-1.5">Message <span
+                        aria-hidden="true">*</span></label>
+                    <textarea id="fmessage" name="message" rows="4" placeholder="Tell me about your project..." required
+                      class="w-full bg-zinc-800 border border-zinc-700 text-white text-sm rounded-xl px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-accent transition-all duration-400 resize-none"></textarea>
+                  </div>
+                  <button type="submit"
+                    class="hover:-translate-y-1 hover:shadow-lg hover:shadow-accent/20 transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] shimmer w-full bg-accent text-white font-display font-bold text-sm py-3.5 rounded-xl hover:bg-accent-light">
+                    Send message →
+                  </button>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer
+    class="bg-zinc-50 dark:bg-black border-t border-zinc-200 dark:border-zinc-950 pt-16 pb-8 md:pt-24 relative z-10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-16">
+
+        <!-- Brand/Bio -->
+        <div class="md:col-span-2">
+          <a href="#hero"
+            class="inline-flex items-center gap-2.5 font-display font-bold text-xl tracking-tight mb-6 group">
+            <svg viewBox="0 0 100 100"
+              class="w-7 h-7 text-accent group-hover:rotate-90 transition-transform duration-500" fill="none"
+              stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="20" y="20" width="60" height="60" rx="12" transform="rotate(45 50 50)" />
+              <path d="M35 63 L50 36 L65 63 M40 53h20" />
+            </svg>
+            <span><span class="text-black dark:text-white">Abhishek Gangwar</span><span class="text-accent">.</span></span>
+          </a>
+          <p class="text-black dark:text-white text-sm leading-relaxed max-w-sm mb-8">
+            Information Technology Engineer &amp; UI/UX Developer studying at REC Mainpuri. Turning ideas into elegant, functional, and visually stunning digital products.
+          </p>
+          <!-- Socials / Contacts -->
+          <div class="flex items-center gap-3">
+            <a href="https://github.com/abhishekgangwar8936-cmd" target="_blank" rel="noopener noreferrer" aria-label="GitHub"
+              class="hover:-translate-y-1 hover:shadow-lg hover:shadow-accent/20 transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] w-10 h-10 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 text-black dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-accent transition-colors">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+              </svg>
+            </a>
+            <a href="https://www.linkedin.com/in/abhishek-gangwar" target="_blank" rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              class="hover:-translate-y-1 hover:shadow-lg hover:shadow-accent/20 transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] w-10 h-10 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 text-black dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-accent transition-colors">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+              </svg>
+            </a>
+            <a href="https://www.instagram.com/__abhishek_gangwar__" target="_blank"
+              rel="noopener noreferrer" aria-label="Instagram"
+              class="hover:-translate-y-1 hover:shadow-lg hover:shadow-accent/20 transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] w-10 h-10 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 text-black dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-accent transition-colors">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.162c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <div>
+          <h4 class="text-accent font-display font-bold mb-6 uppercase tracking-wider text-xs">Explore</h4>
+          <ul class="flex flex-col gap-3.5 text-sm text-black dark:text-white">
+            <li><a href="#hero" class="hover:text-accent transition-colors">Home</a></li>
+            <li><a href="#services" class="hover:text-accent transition-colors">Services</a></li>
+            <li><a href="#work" class="hover:text-accent transition-colors">Work</a></li>
+            <li><a href="#about" class="hover:text-accent transition-colors">About</a></li>
+
+          </ul>
+        </div>
+
+        <!-- Contact info -->
+        <div>
+          <h4 class="text-accent font-display font-bold mb-6 uppercase tracking-wider text-xs">Say Hello</h4>
+          <ul class="flex flex-col gap-3.5 text-sm text-black dark:text-white">
+            <li><a href="mailto:abhishekgangwar8936@gmail.com"
+                onclick="window.open('https://mail.google.com/mail/?view=cm&fs=1&to=abhishekgangwar8936@gmail.com', '_blank');"
+                target="_blank" rel="noopener noreferrer"
+                class="hover:text-accent transition-colors break-all cursor-pointer">abhishekgangwar8936@gmail.com</a></li>
+            <li class="mt-2">
+              <a href="#contact"
+                class="inline-flex items-center gap-1.5 text-accent font-medium hover:text-accent-light transition-colors group">
+                Let's talk
+                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        class="pt-8 border-t border-zinc-200 dark:border-zinc-800/60 flex flex-col items-center justify-center gap-2 text-center">
+        <p class="text-xs text-black dark:text-white">© <span id="yr"></span> Abhishek Gangwar. All rights reserved.</p>
+        <p class="text-xs text-black dark:text-white flex items-center justify-center gap-1.5">
+          Built with <svg class="w-3.5 h-3.5 text-red-500 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+          </svg> and Passion
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function app() {
+      return {
+        dark: true,
+        mm: false,
+        sc: false,
+        s: 'hero',
+
+        init() {
+          // dark mode
+          this.dark = localStorage.getItem('theme') !== 'light';
+          this.$watch('dark', v => localStorage.setItem('theme', v ? 'dark' : 'light'));
+
+          // scroll header
+          let ticking = false;
+          window.addEventListener('scroll', () => {
+            if (!ticking) {
+              window.requestAnimationFrame(() => {
+                this.sc = window.scrollY > 20;
+                ticking = false;
+              });
+              ticking = true;
+            }
+          }, { passive: true });
+
+          // section tracking
+          const sectionIo = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+              if (e.isIntersecting) {
+                this.s = e.target.id;
+              }
+            });
+          }, { rootMargin: '-30% 0px -70% 0px' });
+          ['hero', 'services', 'work', 'about', 'contact'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) sectionIo.observe(el);
+          });
+
+          // reveal
+          const io = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+          }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+          document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+          // year
+          document.getElementById('yr').textContent = new Date().getFullYear();
+        }
+      }
+    }
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const overlay = document.getElementById('entrance-overlay');
+      const logo = document.getElementById('entrance-logo');
+      const name = document.getElementById('entrance-name');
+      const body = document.getElementById('body-container');
+
+      const btn = document.getElementById('entrance-btn');
+      const content = document.getElementById('entrance-content');
+
+      if (overlay) {
+        if (logo) logo.style.willChange = 'transform, opacity';
+        if (name) name.style.willChange = 'transform, opacity';
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (logo) {
+              logo.classList.remove('opacity-0', 'scale-50');
+              logo.classList.add('opacity-100', 'scale-100');
+            }
+
+            if (name) {
+              setTimeout(() => {
+                name.classList.remove('opacity-0', '-translate-x-full');
+                name.classList.add('opacity-100', 'translate-x-0');
+              }, 200);
+            }
+
+            setTimeout(() => {
+              overlay.style.opacity = '0';
+              body.classList.remove('overflow-hidden', 'h-screen');
+              setTimeout(() => {
+                overlay.remove();
+                if (logo) logo.style.willChange = 'auto';
+                if (name) name.style.willChange = 'auto';
+
+                // Initialize Lenis smooth scroll after the overlay is removed
+                const lenis = new Lenis({
+                  lerp: 0.08,
+                  smoothWheel: true,
+                  wheelMultiplier: 1.2,
+                  syncTouch: true
+                });
+
+                lenis.on('scroll', (e) => {
+                  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+                  let scrollFraction = maxScroll > 0 ? e.scroll / maxScroll : 0;
+                  if (scrollFraction < 0) scrollFraction = 0;
+                  if (scrollFraction > 1) scrollFraction = 1;
+
+                  const frameIndex = Math.min(89, Math.floor(scrollFraction * 90));
+                  if (window.drawScrollFrame) window.drawScrollFrame(frameIndex);
+                });
+
+                function raf(time) {
+                  lenis.raf(time);
+                  requestAnimationFrame(raf);
+                }
+                requestAnimationFrame(raf);
+
+                // Allow Lenis to handle anchor links
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                  anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    lenis.scrollTo(this.getAttribute('href'));
+                  });
+                });
+
+              }, 800);
+            }, 1200);
+          });
+        });
+      }
+    });
+
+    // --- Scroll Sequence Animation ---
+    (function initScrollSequence() {
+      const canvas = document.getElementById('scroll-seq-bg');
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      const frameCount = 90;
+      const images = [];
+      let imagesLoaded = 0;
+
+      for (let i = 1; i <= frameCount; i++) {
+        const img = new Image();
+        const frameNum = i.toString().padStart(3, '0');
+        img.src = `assets/images/abhishek-scroll/frame-${frameNum}.jpg?v=piyush_exact_v7`;
+        img.onload = () => {
+          imagesLoaded++;
+          if (imagesLoaded === 1) {
+            window.drawScrollFrame(0);
+          }
+        };
+        images.push(img);
+      }
+
+      let currentFrame = -1;
+      let lastWidth = -1;
+      let lastHeight = -1;
+
+      window.drawScrollFrame = function (index, forceResize = false) {
+        if (!images[index] || !images[index].complete) return;
+        if (currentFrame === index && !forceResize) return;
+        currentFrame = index;
+
+        // Massive GPU optimization: Cap DPR to 1. Since canvas is blurred, we don't need high res
+        const dpr = Math.min(window.devicePixelRatio || 1, 1);
+        const targetWidth = window.innerWidth * dpr;
+        const targetHeight = window.innerHeight * dpr;
+
+        if (lastWidth !== targetWidth || lastHeight !== targetHeight || forceResize) {
+          canvas.width = targetWidth;
+          canvas.height = targetHeight;
+          lastWidth = targetWidth;
+          lastHeight = targetHeight;
+        }
+
+        // We must re-scale the context every time we resize the canvas since setting width/height resets the transform
+        ctx.setTransform(1, 0, 0, 1, 0, 0); // reset transform
+        ctx.scale(dpr, dpr);
+
+        const img = images[index];
+        const canvasRatio = window.innerWidth / window.innerHeight;
+
+        // Crop the right 20% of the image to keep the focus on the left while zooming out more
+        const cropWidth = img.width * 0.80;
+        const cropHeight = img.height;
+        const imgRatio = cropWidth / cropHeight;
+
+        let drawWidth = window.innerWidth;
+        let drawHeight = window.innerHeight;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        if (canvasRatio > imgRatio) {
+          drawHeight = window.innerWidth / imgRatio;
+          // Shift the vertical center closer to the top (0.1) to guarantee head/hair is visible
+          offsetY = (window.innerHeight - drawHeight) * 0.1;
+        } else {
+          drawWidth = window.innerHeight * imgRatio;
+          offsetX = 0; // Anchor to the left side
+        }
+
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        ctx.drawImage(img, 0, 0, cropWidth, cropHeight, offsetX, offsetY, drawWidth, drawHeight);
+      };
+
+      function handleScrollUpdate(force = false) {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+        const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        let scrollFraction = Math.min(1, Math.max(0, scrollTop / maxScroll));
+        const frameIndex = Math.min(89, Math.floor(scrollFraction * 90));
+        window.drawScrollFrame(frameIndex, force);
+      }
+
+      window.addEventListener('scroll', () => handleScrollUpdate(false), { passive: true });
+      window.addEventListener('resize', () => handleScrollUpdate(true));
+    })();
+
+    function handleContactSubmit(event) {
+      event.preventDefault();
+      const form = event.target;
+
+      // Trigger built-in browser validation
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const name = document.getElementById('fname').value;
+      const email = document.getElementById('femail').value;
+      const subjectInput = document.getElementById('fsubject').value;
+      const message = document.getElementById('fmessage').value;
+
+      const subject = encodeURIComponent(subjectInput || `New inquiry from ${name}`);
+      const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+
+      window.location.href = `mailto:abhishekgangwar8936@gmail.com?subject=${subject}&body=${body}`;
+    }
+  </script>
+
+</body>
+
+</html>

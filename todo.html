@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Todo — Minimal Daily Planner | Abhishek</title>
+  <meta name="description" content="A minimalist, material-inspired daily task planner and productivity to-do app by Abhishek.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23FF6B2B' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'><rect x='20' y='20' width='60' height='60' rx='12' transform='rotate(45 50 50)' /><path d='M35 63 L50 36 L65 63 M40 53h20' /></svg>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#FFF7ED',
+              100: '#FFEDD5',
+              200: '#FED7AA',
+              300: '#FDBA74',
+              400: '#FB923C',
+              500: '#FF6B2B',
+              600: '#EA580C',
+              700: '#C2410C',
+              800: '#9A3412',
+              900: '#7C2D12',
+            },
+            accent: '#FF6B2B'
+          },
+          fontFamily: {
+            display: ['Outfit', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .font-display { font-family: 'Outfit', sans-serif; }
+    .glass-card {
+      background: rgba(24, 24, 27, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .light .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 107, 43, 0.4); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: #FF6B2B; }
+    [x-cloak] { display: none !important; }
+  </style>
+</head>
+
+<body class="bg-[#0D0D11] text-zinc-100 min-h-screen antialiased selection:bg-brand-500 selection:text-white"
+      :class="dark ? 'dark bg-[#0D0D11] text-zinc-100' : 'light bg-zinc-50 text-zinc-900'"
+      x-data="todoApp()" x-init="initApp()">
+
+  <!-- Background decorative glows -->
+  <div class="fixed top-[-15%] left-[-10%] w-[500px] h-[500px] bg-brand-500/15 rounded-full blur-[140px] pointer-events-none -z-10"></div>
+  <div class="fixed bottom-[-15%] right-[-10%] w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none -z-10"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- 1. TOP ANNOUNCEMENT / PORTFOLIO NAV STRIP -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <header class="border-b border-zinc-200/40 dark:border-zinc-800/60 bg-white/70 dark:bg-black/50 backdrop-blur-xl sticky top-0 z-40 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      
+      <!-- Logo & Brand -->
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2.5 font-display font-bold text-xl tracking-tight group" title="Abhishek">
+          <svg viewBox="0 0 100 100" class="w-8 h-8 text-accent shrink-0 group-hover:rotate-90 transition-transform duration-500" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="20" y="20" width="60" height="60" rx="12" transform="rotate(45 50 50)" />
+            <path d="M35 63 L50 36 L65 63 M40 53h20" />
+          </svg>
+          <span class="text-zinc-900 dark:text-white">Abhishek<span class="text-accent">.</span></span>
+        </a>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="flex items-center gap-2.5">
+        <!-- Dark mode toggle -->
+        <button @click="toggleTheme()" class="w-9 h-9 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:text-accent transition-colors" :aria-label="dark ? 'Light mode' : 'Dark mode'">
+          <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          <svg x-show="dark" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- 2. MAIN PLANNER CONTAINER -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+
+    <!-- Hero Header & Stats Bar -->
+    <div class="mb-8">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-zinc-200/60 dark:border-zinc-800/80">
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs uppercase tracking-wider font-bold text-accent">Personal Productivity Planner</span>
+            <span class="text-zinc-400">•</span>
+            <span class="text-xs text-zinc-400 font-mono" x-text="todayFormatted"></span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-display font-extrabold tracking-tight text-zinc-900 dark:text-white">
+            My Todo & Daily Planner
+          </h1>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1 max-w-xl">
+            A fast, distraction-free Material task organizer with reminder alerts, priority tags, and persistence.
+          </p>
+        </div>
+
+        <!-- Productivity Summary Metric Cards -->
+        <div class="grid grid-cols-3 gap-3">
+          <div class="glass-card rounded-2xl p-3 sm:p-4 text-center">
+            <div class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Total</div>
+            <div class="text-xl sm:text-2xl font-bold font-display text-zinc-900 dark:text-white" x-text="todos.length">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 sm:p-4 text-center">
+            <div class="text-xs text-emerald-500 font-medium">Done</div>
+            <div class="text-xl sm:text-2xl font-bold font-display text-emerald-500" x-text="completedCount">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 sm:p-4 text-center">
+            <div class="text-xs text-accent font-medium">Score</div>
+            <div class="text-xl sm:text-2xl font-bold font-display text-accent" x-text="completionRate + '%'">0%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weekly Planner Timeline Strip -->
+      <div class="pt-6">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Weekly Schedule</span>
+          <span class="text-xs text-zinc-400" x-text="'Today: ' + selectedDayLabel"></span>
+        </div>
+        <div class="grid grid-cols-7 gap-2">
+          <template x-for="day in weekDays" :key="day.iso">
+            <button @click="selectedDate = day.iso"
+                    :class="selectedDate === day.iso ? 'bg-accent text-white shadow-lg shadow-accent/25 border-accent' : 'bg-white dark:bg-zinc-900/60 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:border-accent/50'"
+                    class="rounded-2xl p-2 sm:p-3 text-center border transition-all duration-200 group">
+              <div class="text-[10px] sm:text-xs font-medium uppercase tracking-wider opacity-80" x-text="day.shortName"></div>
+              <div class="text-sm sm:text-lg font-bold font-display mt-0.5" x-text="day.dayNumber"></div>
+              <div class="mt-1 flex justify-center gap-0.5">
+                <span x-show="day.hasTasks" class="w-1.5 h-1.5 rounded-full" :class="selectedDate === day.iso ? 'bg-white' : 'bg-accent'"></span>
+              </div>
+            </button>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- 3. QUICK ADD TASK BAR -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="glass-card rounded-2xl p-4 sm:p-5 mb-8 shadow-xl shadow-black/5 dark:shadow-none">
+      <form @submit.prevent="addQuickTask()" class="flex flex-col gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-brand-500/10 text-brand-500 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+          </div>
+          <input type="text" x-model="quickText" placeholder="What task do you want to accomplish today? (Press Enter to add)"
+                 class="w-full bg-transparent text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 text-base sm:text-lg font-medium focus:outline-none">
+          <button type="submit" :disabled="!quickText.trim()"
+                  class="shrink-0 bg-accent hover:bg-brand-600 disabled:opacity-40 disabled:hover:bg-accent text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-xl transition-all shadow-md shadow-accent/20 flex items-center gap-1.5">
+            <span>Add Task</span>
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </button>
+        </div>
+
+        <!-- Optional Detailed Attributes (Category & Due Time) -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-zinc-200/40 dark:border-zinc-800/50 text-xs">
+          <div class="flex items-center gap-2 overflow-x-auto py-1">
+            <span class="text-zinc-400 font-medium shrink-0">Priority:</span>
+            <template x-for="p in priorities" :key="p.id">
+              <button type="button" @click="quickPriority = p.id"
+                      :class="quickPriority === p.id ? p.activeClass : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'"
+                      class="px-2.5 py-1 rounded-lg text-xs font-medium transition-colors flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full" :class="p.dotClass"></span>
+                <span x-text="p.label"></span>
+              </button>
+            </template>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button type="button" @click="openDetailedModal()"
+                    class="text-xs text-accent hover:underline flex items-center gap-1 font-semibold">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+              <span>More Options (Reminder & Notes)</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- 4. SEARCH, FILTER TABS & BULK ACTIONS -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      
+      <!-- Filter Tabs -->
+      <div class="flex items-center gap-1.5 p-1 bg-zinc-100 dark:bg-zinc-900/80 rounded-2xl border border-zinc-200 dark:border-zinc-800 self-start sm:self-auto overflow-x-auto max-w-full">
+        <button @click="currentFilter = 'all'"
+                :class="currentFilter === 'all' ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'"
+                class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5">
+          <span>All</span>
+          <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300" x-text="todos.length"></span>
+        </button>
+
+        <button @click="currentFilter = 'pending'"
+                :class="currentFilter === 'pending' ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'"
+                class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5">
+          <span>Pending</span>
+          <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300" x-text="pendingCount"></span>
+        </button>
+
+        <button @click="currentFilter = 'today'"
+                :class="currentFilter === 'today' ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'"
+                class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5">
+          <span>Today</span>
+          <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-brand-500/20 text-brand-500" x-text="todayCount"></span>
+        </button>
+
+        <button @click="currentFilter = 'completed'"
+                :class="currentFilter === 'completed' ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'"
+                class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5">
+          <span>Completed</span>
+          <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-500/20 text-emerald-500" x-text="completedCount"></span>
+        </button>
+      </div>
+
+      <!-- Search & Tools -->
+      <div class="flex items-center gap-2">
+        <div class="relative flex-1 sm:w-56">
+          <input type="text" x-model="searchQuery" placeholder="Search tasks..."
+                 class="w-full bg-white dark:bg-zinc-900 text-xs px-3 py-2 pl-8 rounded-xl border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:border-accent text-zinc-900 dark:text-white placeholder-zinc-400">
+          <svg class="w-3.5 h-3.5 text-zinc-400 absolute left-2.5 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </div>
+
+        <!-- Sample Tasks / Reset button -->
+        <button @click="resetSampleTasks()" title="Reset to default tasks"
+                class="p-2 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:text-accent hover:border-accent transition-colors text-xs flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- 5. TASK LIST -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="space-y-3">
+      
+      <!-- Empty state when no tasks match -->
+      <div x-show="filteredTodos.length === 0" x-cloak
+           class="text-center py-16 px-4 glass-card rounded-3xl border border-dashed border-zinc-300 dark:border-zinc-800">
+        <div class="w-16 h-16 rounded-3xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mx-auto mb-4 text-zinc-400">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        </div>
+        <h3 class="text-lg font-bold font-display text-zinc-900 dark:text-white mb-1">No tasks in this view</h3>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto mb-5">
+          You're all caught up! Add a new task using the bar above or reset sample tasks.
+        </p>
+        <button @click="resetSampleTasks()" class="text-xs font-semibold px-4 py-2 rounded-xl bg-accent text-white hover:bg-brand-600 transition-colors shadow-md shadow-accent/20">
+          Load Sample Tasks
+        </button>
+      </div>
+
+      <!-- Task items repeater -->
+      <template x-for="(todo, index) in filteredTodos" :key="todo.id">
+        <div class="glass-card rounded-2xl p-4 sm:p-4.5 transition-all duration-300 hover:border-accent/40 group flex items-start justify-between gap-3.5"
+             :class="todo.completed ? 'opacity-60 bg-zinc-100/50 dark:bg-zinc-900/30' : ''">
+          
+          <!-- Checkbox & Task Main Info -->
+          <div class="flex items-start gap-3.5 flex-1 min-w-0">
+            <!-- Checkbox button -->
+            <button @click="toggleTodo(todo.id)"
+                    class="w-6 h-6 rounded-lg mt-0.5 border flex items-center justify-center transition-all duration-200 shrink-0"
+                    :class="todo.completed ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-zinc-300 dark:border-zinc-700 hover:border-accent bg-transparent'">
+              <svg x-show="todo.completed" class="w-3.5 h-3.5 stroke-[3]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            </button>
+
+            <!-- Text & Metadata -->
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2 mb-1">
+                <span class="text-base font-semibold transition-colors break-words"
+                      :class="todo.completed ? 'line-through text-zinc-400 dark:text-zinc-500' : 'text-zinc-900 dark:text-white'"
+                      x-text="todo.title"></span>
+
+                <!-- Priority badge -->
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider"
+                      :class="getPriorityBadgeClass(todo.priority)"
+                      x-text="todo.priority"></span>
+
+                <!-- Category badge -->
+                <span x-show="todo.category" class="px-2 py-0.5 rounded-md text-[10px] font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
+                      x-text="todo.category"></span>
+              </div>
+
+              <!-- Description / Notes -->
+              <p x-show="todo.description" class="text-xs text-zinc-500 dark:text-zinc-400 mb-2 leading-relaxed"
+                 :class="todo.completed ? 'line-through opacity-70' : ''"
+                 x-text="todo.description"></p>
+
+              <!-- Reminder time & date badge -->
+              <div class="flex flex-wrap items-center gap-3 text-[11px] text-zinc-400">
+                <span class="flex items-center gap-1">
+                  <svg class="w-3 h-3 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                  <span x-text="todo.dueDate || 'No date'"></span>
+                </span>
+
+                <span x-show="todo.dueTime" class="flex items-center gap-1">
+                  <svg class="w-3 h-3 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  <span x-text="todo.dueTime"></span>
+                </span>
+
+                <span x-show="todo.hasReminder" class="flex items-center gap-1 text-emerald-500 font-medium">
+                  <svg class="w-3 h-3 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                  <span>Reminder Active</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions (Edit & Delete) -->
+          <div class="flex items-center gap-1 shrink-0 opacity-80 group-hover:opacity-100 transition-opacity">
+            <button @click="editTodo(todo)" title="Edit task"
+                    class="p-1.5 rounded-lg text-zinc-400 hover:text-accent hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            </button>
+            <button @click="deleteTodo(todo.id)" title="Delete task"
+                    class="p-1.5 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-500/10 transition-colors">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </div>
+
+        </div>
+      </template>
+
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- 6. BOTTOM TOOLBAR & BULK ACTIONS -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="mt-8 pt-6 border-t border-zinc-200/60 dark:border-zinc-800/80 flex items-center justify-between text-xs text-zinc-400">
+      <div class="flex items-center gap-3">
+        <span>Progress: <strong class="text-zinc-900 dark:text-white" x-text="completedCount + ' of ' + todos.length + ' done'"></strong></span>
+        <span>•</span>
+        <button @click="clearCompleted()" class="text-red-500 hover:underline" :disabled="completedCount === 0" :class="completedCount === 0 ? 'opacity-40 cursor-not-allowed' : ''">
+          Clear Completed
+        </button>
+      </div>
+      <div>
+        <span>Daily Productivity Planner</span>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- 7. DETAILED TASK MODAL (ADD / EDIT) -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div x-show="showModal" x-cloak
+       class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md"
+       x-transition:enter="transition ease-out duration-300"
+       x-transition:enter-start="opacity-0"
+       x-transition:enter-end="opacity-100"
+       x-transition:leave="transition ease-in duration-200"
+       x-transition:leave-start="opacity-100"
+       x-transition:leave-end="opacity-0">
+
+    <div @click.away="showModal = false"
+         class="glass-card w-full max-w-lg rounded-3xl p-6 sm:p-8 shadow-2xl border border-zinc-200/50 dark:border-zinc-800"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+         x-transition:enter-end="opacity-100 scale-100 translate-y-0">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-zinc-200/60 dark:border-zinc-800/80 mb-6">
+        <div>
+          <h2 class="text-xl font-bold font-display text-zinc-900 dark:text-white" x-text="editingId ? 'Edit Task' : 'Create New Planner Task'"></h2>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">Configure reminder date, priority, and category.</p>
+        </div>
+        <button @click="showModal = false" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-zinc-600 dark:hover:text-white transition-colors">
+          ✕
+        </button>
+      </div>
+
+      <form @submit.prevent="saveDetailedTask()" class="space-y-4">
+        <!-- Title -->
+        <div>
+          <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1.5">Task Title *</label>
+          <input type="text" x-model="modalForm.title" required placeholder="e.g. Prepare System Architecture Design"
+                 class="w-full bg-zinc-100 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-accent">
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1.5">Description & Notes</label>
+          <textarea x-model="modalForm.description" rows="3" placeholder="Add specific checklists, links, or notes..."
+                    class="w-full bg-zinc-100 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-accent"></textarea>
+        </div>
+
+        <!-- Priority & Category -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1.5">Priority Level</label>
+            <select x-model="modalForm.priority" class="w-full bg-zinc-100 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-accent">
+              <option value="critical">Critical</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1.5">Category</label>
+            <input type="text" x-model="modalForm.category" placeholder="Work, Study, Personal..."
+                   class="w-full bg-zinc-100 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-accent">
+          </div>
+        </div>
+
+        <!-- Due Date & Due Time -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1.5">Due Date</label>
+            <input type="date" x-model="modalForm.dueDate"
+                   class="w-full bg-zinc-100 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-accent">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1.5">Due Time</label>
+            <input type="time" x-model="modalForm.dueTime"
+                   class="w-full bg-zinc-100 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-accent">
+          </div>
+        </div>
+
+        <!-- Reminder Checkbox -->
+        <div class="flex items-center gap-2 pt-1">
+          <input type="checkbox" id="reminderCheckbox" x-model="modalForm.hasReminder" class="w-4 h-4 rounded text-accent focus:ring-accent accent-accent">
+          <label for="reminderCheckbox" class="text-xs text-zinc-600 dark:text-zinc-300 font-medium cursor-pointer">
+            Enable Notification / Reminder for this task
+          </label>
+        </div>
+
+        <!-- Modal Submit & Cancel Buttons -->
+        <div class="pt-4 flex items-center justify-end gap-3">
+          <button type="button" @click="showModal = false" class="px-4 py-2 rounded-xl text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+            Cancel
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-accent hover:bg-brand-600 text-white transition-all shadow-lg shadow-accent/25 flex items-center gap-1.5">
+            <span x-text="editingId ? 'Update Task' : 'Save Task'"></span>
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- 8. ALPINE.JS APP LOGIC -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <script>
+    function todoApp() {
+      return {
+        dark: true,
+        todos: [],
+        currentFilter: 'all',
+        searchQuery: '',
+        selectedDate: new Date().toISOString().split('T')[0],
+        weekDays: [],
+        quickText: '',
+        quickPriority: 'medium',
+        showModal: false,
+        editingId: null,
+        modalForm: {
+          title: '',
+          description: '',
+          priority: 'medium',
+          category: 'Work',
+          dueDate: '',
+          dueTime: '18:00',
+          hasReminder: true,
+        },
+
+        priorities: [
+          { id: 'critical', label: 'Critical', dotClass: 'bg-red-500', activeClass: 'bg-red-500/10 text-red-500 border border-red-500/30' },
+          { id: 'high', label: 'High', dotClass: 'bg-brand-500', activeClass: 'bg-brand-500/10 text-brand-500 border border-brand-500/30' },
+          { id: 'medium', label: 'Medium', dotClass: 'bg-blue-500', activeClass: 'bg-blue-500/10 text-blue-500 border border-blue-500/30' },
+          { id: 'low', label: 'Low', dotClass: 'bg-emerald-500', activeClass: 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/30' },
+        ],
+
+        get todayFormatted() {
+          return new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+        },
+
+        get selectedDayLabel() {
+          return new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+        },
+
+        get completedCount() {
+          return this.todos.filter(t => t.completed).length;
+        },
+
+        get pendingCount() {
+          return this.todos.filter(t => !t.completed).length;
+        },
+
+        get todayCount() {
+          const todayIso = new Date().toISOString().split('T')[0];
+          return this.todos.filter(t => t.dueDate === todayIso).length;
+        },
+
+        get completionRate() {
+          if (this.todos.length === 0) return 0;
+          return Math.round((this.completedCount / this.todos.length) * 100);
+        },
+
+        get filteredTodos() {
+          let list = this.todos;
+
+          // Filter tabs
+          if (this.currentFilter === 'pending') {
+            list = list.filter(t => !t.completed);
+          } else if (this.currentFilter === 'completed') {
+            list = list.filter(t => t.completed);
+          } else if (this.currentFilter === 'today') {
+            const todayIso = new Date().toISOString().split('T')[0];
+            list = list.filter(t => t.dueDate === todayIso);
+          }
+
+          // Search query
+          if (this.searchQuery.trim()) {
+            const q = this.searchQuery.toLowerCase();
+            list = list.filter(t => 
+              t.title.toLowerCase().includes(q) || 
+              (t.description && t.description.toLowerCase().includes(q)) ||
+              (t.category && t.category.toLowerCase().includes(q))
+            );
+          }
+
+          return list;
+        },
+
+        initApp() {
+          // Initialize theme
+          this.dark = localStorage.getItem('theme') !== 'light';
+          this.generateWeekDays();
+
+          // Load todos from localStorage or default samples
+          const saved = localStorage.getItem('abhishek_todos_v1');
+          if (saved) {
+            try {
+              this.todos = JSON.parse(saved);
+            } catch (e) {
+              this.loadDefaultTasks();
+            }
+          } else {
+            this.loadDefaultTasks();
+          }
+
+          this.updateWeekDayDots();
+        },
+
+        toggleTheme() {
+          this.dark = !this.dark;
+          localStorage.setItem('theme', this.dark ? 'dark' : 'light');
+        },
+
+        generateWeekDays() {
+          const days = [];
+          const curr = new Date();
+          const first = curr.getDate() - curr.getDay() + 1; // Monday
+
+          for (let i = 0; i < 7; i++) {
+            const d = new Date(curr.setDate(first + i));
+            const iso = d.toISOString().split('T')[0];
+            days.push({
+              iso: iso,
+              shortName: d.toLocaleDateString('en-US', { weekday: 'short' }),
+              dayNumber: d.getDate(),
+              hasTasks: false
+            });
+          }
+          this.weekDays = days;
+        },
+
+        updateWeekDayDots() {
+          const taskDates = new Set(this.todos.map(t => t.dueDate));
+          this.weekDays.forEach(d => {
+            d.hasTasks = taskDates.has(d.iso);
+          });
+        },
+
+        saveToStorage() {
+          localStorage.setItem('abhishek_todos_v1', JSON.stringify(this.todos));
+          this.updateWeekDayDots();
+        },
+
+        loadDefaultTasks() {
+          const todayIso = new Date().toISOString().split('T')[0];
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          const tomorrowIso = tomorrow.toISOString().split('T')[0];
+
+          this.todos = [
+            {
+              id: 'todo-1',
+              title: 'Review System Design & Microservices Architecture',
+              description: 'Focus on distributed caching, API rate limiting, and event queues.',
+              priority: 'high',
+              category: 'IT Engineering',
+              dueDate: todayIso,
+              dueTime: '11:00',
+              hasReminder: true,
+              completed: false,
+              createdAt: Date.now()
+            },
+            {
+              id: 'todo-2',
+              title: 'Deploy Live Price Comparison & Tracker Engine',
+              description: 'Finalize real-time store comparisons and test affiliate link generation.',
+              priority: 'critical',
+              category: 'Projects',
+              dueDate: todayIso,
+              dueTime: '15:30',
+              hasReminder: true,
+              completed: true,
+              createdAt: Date.now() - 3600000
+            },
+            {
+              id: 'todo-3',
+              title: 'Enhance My Todo app with Material Design & Reminders',
+              description: 'Clean minimalist layout matching Abhishek Gangwar portfolio aesthetic.',
+              priority: 'high',
+              category: 'App Dev',
+              dueDate: todayIso,
+              dueTime: '18:00',
+              hasReminder: true,
+              completed: true,
+              createdAt: Date.now() - 7200000
+            },
+            {
+              id: 'todo-4',
+              title: 'Frontend UI Micro-Animations & Lenis Smooth Scroll Polish',
+              description: 'Verify 60fps performance and smooth WebGL fluid mesh canvas render.',
+              priority: 'medium',
+              category: 'Frontend',
+              dueDate: tomorrowIso,
+              dueTime: '14:00',
+              hasReminder: false,
+              completed: false,
+              createdAt: Date.now() - 10800000
+            },
+            {
+              id: 'todo-5',
+              title: 'Workout & 30-min Evening Run',
+              description: 'Core training session & recovery stretches.',
+              priority: 'low',
+              category: 'Personal',
+              dueDate: todayIso,
+              dueTime: '20:00',
+              hasReminder: true,
+              completed: false,
+              createdAt: Date.now() - 14400000
+            }
+          ];
+          this.saveToStorage();
+        },
+
+        resetSampleTasks() {
+          this.loadDefaultTasks();
+        },
+
+        addQuickTask() {
+          if (!this.quickText.trim()) return;
+
+          const todayIso = new Date().toISOString().split('T')[0];
+          const newTodo = {
+            id: 'todo-' + Date.now(),
+            title: this.quickText.trim(),
+            description: '',
+            priority: this.quickPriority,
+            category: 'Daily',
+            dueDate: todayIso,
+            dueTime: '18:00',
+            hasReminder: true,
+            completed: false,
+            createdAt: Date.now()
+          };
+
+          this.todos.unshift(newTodo);
+          this.quickText = '';
+          this.saveToStorage();
+        },
+
+        toggleTodo(id) {
+          const item = this.todos.find(t => t.id === id);
+          if (item) {
+            item.completed = !item.completed;
+            if (item.completed && typeof confetti === 'function') {
+              confetti({
+                particleCount: 50,
+                spread: 60,
+                origin: { y: 0.75 },
+                colors: ['#FF6B2B', '#10B981', '#3B82F6']
+              });
+            }
+            this.saveToStorage();
+          }
+        },
+
+        deleteTodo(id) {
+          this.todos = this.todos.filter(t => t.id !== id);
+          this.saveToStorage();
+        },
+
+        clearCompleted() {
+          this.todos = this.todos.filter(t => !t.completed);
+          this.saveToStorage();
+        },
+
+        openDetailedModal() {
+          this.editingId = null;
+          const todayIso = new Date().toISOString().split('T')[0];
+          this.modalForm = {
+            title: this.quickText.trim(),
+            description: '',
+            priority: this.quickPriority || 'medium',
+            category: 'Work',
+            dueDate: todayIso,
+            dueTime: '18:00',
+            hasReminder: true,
+          };
+          this.showModal = true;
+        },
+
+        editTodo(todo) {
+          this.editingId = todo.id;
+          this.modalForm = {
+            title: todo.title,
+            description: todo.description || '',
+            priority: todo.priority || 'medium',
+            category: todo.category || 'General',
+            dueDate: todo.dueDate || new Date().toISOString().split('T')[0],
+            dueTime: todo.dueTime || '18:00',
+            hasReminder: !!todo.hasReminder,
+          };
+          this.showModal = true;
+        },
+
+        saveDetailedTask() {
+          if (!this.modalForm.title.trim()) return;
+
+          if (this.editingId) {
+            const item = this.todos.find(t => t.id === this.editingId);
+            if (item) {
+              item.title = this.modalForm.title.trim();
+              item.description = this.modalForm.description.trim();
+              item.priority = this.modalForm.priority;
+              item.category = this.modalForm.category.trim();
+              item.dueDate = this.modalForm.dueDate;
+              item.dueTime = this.modalForm.dueTime;
+              item.hasReminder = this.modalForm.hasReminder;
+            }
+          } else {
+            const newTodo = {
+              id: 'todo-' + Date.now(),
+              title: this.modalForm.title.trim(),
+              description: this.modalForm.description.trim(),
+              priority: this.modalForm.priority,
+              category: this.modalForm.category.trim() || 'Work',
+              dueDate: this.modalForm.dueDate || new Date().toISOString().split('T')[0],
+              dueTime: this.modalForm.dueTime || '18:00',
+              hasReminder: this.modalForm.hasReminder,
+              completed: false,
+              createdAt: Date.now()
+            };
+            this.todos.unshift(newTodo);
+          }
+
+          this.quickText = '';
+          this.showModal = false;
+          this.saveToStorage();
+        },
+
+        getPriorityBadgeClass(p) {
+          switch (p) {
+            case 'critical':
+              return 'bg-red-500/15 text-red-500 border border-red-500/30';
+            case 'high':
+              return 'bg-brand-500/15 text-brand-500 border border-brand-500/30';
+            case 'medium':
+              return 'bg-blue-500/15 text-blue-500 border border-blue-500/30';
+            case 'low':
+              return 'bg-emerald-500/15 text-emerald-500 border border-emerald-500/30';
+            default:
+              return 'bg-zinc-500/15 text-zinc-400 border border-zinc-500/30';
+          }
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>
