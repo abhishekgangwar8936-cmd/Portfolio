@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found — Abhishek Gangwar Portfolio</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23FF6B2B' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'><rect x='20' y='20' width='60' height='60' rx='12' transform='rotate(45 50 50)' /><path d='M35 63 L50 36 L65 63 M40 53h20' /></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script>
+    // Smart auto-redirect for case-sensitive GitHub Pages URLs
+    (function() {
+      var path = window.location.pathname;
+      var search = window.location.search || '';
+      var hash = window.location.hash || '';
+
+      // Fix lowercase /portfolio/ -> /Portfolio/
+      if (path.toLowerCase().startsWith('/portfolio')) {
+        var correctedPath = path.replace(/^\/portfolio/i, '/Portfolio');
+        if (correctedPath !== path) {
+          window.location.replace(correctedPath + search + hash);
+          return;
+        }
+      }
+
+      // If user landed at root / without repository prefix
+      if (path === '/' || path === '') {
+        window.location.replace('/Portfolio/' + search + hash);
+        return;
+      }
+    })();
+  </script>
+  <style>
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: #09090b;
+      color: #fafafa;
+    }
+    h1, h2, h3 {
+      font-family: 'PT Sans', sans-serif;
+    }
+    .glow {
+      position: absolute;
+      border-radius: 9999px;
+      filter: blur(120px);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-black text-white">
+  <!-- Ambient background glow -->
+  <div class="glow w-96 h-96 bg-[#FF6B2B]/20 -top-20 -right-20"></div>
+  <div class="glow w-96 h-96 bg-blue-500/15 -bottom-20 -left-20"></div>
+
+  <div class="max-w-md w-full text-center relative z-10 p-8 rounded-3xl border border-zinc-800 bg-zinc-950/70 backdrop-blur-xl shadow-2xl">
+    <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-[#FF6B2B]/10 border border-[#FF6B2B]/30 flex items-center justify-center">
+      <svg class="w-8 h-8 text-[#FF6B2B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+    </div>
+
+    <h1 class="text-6xl font-bold tracking-tight text-[#FF6B2B] mb-2 font-display">404</h1>
+    <h2 class="text-xl font-bold mb-3 text-white">Page Not Found</h2>
+    <p class="text-sm text-zinc-400 mb-8 leading-relaxed">
+      The link you followed might have an incorrect case or does not exist. Choose where you want to go:
+    </p>
+
+    <div class="flex flex-col gap-3">
+      <a href="/Portfolio/" class="w-full py-3 px-4 rounded-xl bg-[#FF6B2B] hover:bg-[#FF8F5C] text-white font-medium text-sm transition-all duration-200 shadow-lg shadow-[#FF6B2B]/20 flex items-center justify-center gap-2">
+        <span>Portfolio Home</span> →
+      </a>
+      <a href="/Portfolio/todo" class="w-full py-3 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2">
+        <span>📝 My Todo App</span>
+      </a>
+      <a href="/Portfolio/sastakhareedo" class="w-full py-3 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2">
+        <span>🛒 SastaKhareedo Tracker</span>
+      </a>
+      <a href="/Portfolio/projects" class="w-full py-3 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2">
+        <span>📂 All Projects</span>
+      </a>
+    </div>
+  </div>
+</body>
+</html>
