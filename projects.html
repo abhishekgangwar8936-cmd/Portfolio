@@ -8,6 +8,12 @@
   <title>Projects — Abhishek Gangwar</title>
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23FF6B2B' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'><rect x='20' y='20' width='60' height='60' rx='12' transform='rotate(45 50 50)' /><path d='M35 63 L50 36 L65 63 M40 53h20' /></svg>">
+  <script>
+    if (window.location.pathname.endsWith('.html')) {
+      var cleanUrl = window.location.pathname.replace(/\.html$/, '') + window.location.search + window.location.hash;
+      window.history.replaceState(null, '', cleanUrl);
+    }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <!-- Lenis for smooth scrolling -->
@@ -226,7 +232,7 @@
   <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
     :class="scrolled?'bg-white/60 dark:bg-black/60 backdrop-blur-2xl shadow-sm shadow-black/5':'bg-transparent'">
     <nav class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-2.5 font-display font-bold text-xl tracking-tight z-10 group">
+      <a href="./" class="flex items-center gap-2.5 font-display font-bold text-xl tracking-tight z-10 group">
         <svg viewBox="0 0 100 100"
           class="w-8 h-8 text-accent shrink-0 group-hover:rotate-90 transition-transform duration-500" fill="none"
           stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"
@@ -237,17 +243,17 @@
         <span><span class="text-zinc-900 dark:text-white">Abhishek Gangwar</span><span class="text-accent">.</span></span>
       </a>
       <ul class="hidden md:flex items-center gap-8 text-sm font-medium">
-        <li><a href="index.html#services"
+        <li><a href="./#services"
             class="nav-link text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">Services</a>
         </li>
-        <li><a href="projects.html" class="nav-link text-accent font-medium">Work</a></li>
-        <li><a href="index.html#about"
+        <li><a href="projects" class="nav-link text-accent font-medium">Work</a></li>
+        <li><a href="./#about"
             class="nav-link text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">About</a>
         </li>
-        <li><a href="blog.html"
+        <li><a href="blog"
             class="nav-link text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">Blog</a>
         </li>
-        <li><a href="index.html#contact"
+        <li><a href="./#contact"
             class="nav-link text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">Contact</a>
         </li>
       </ul>
@@ -266,7 +272,7 @@
               d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
           </svg>
         </button>
-        <a href="index.html#contact"
+        <a href="./#contact"
           class="hidden md:inline-flex items-center gap-2 btn-primary bg-accent text-white text-sm font-medium px-5 py-2 rounded-full hover:bg-accent-light transition-colors">Hire
           me &rarr;</a>
         <button @click="mobileMenu=!mobileMenu"
@@ -289,13 +295,13 @@
       x-transition:leave-end="opacity-0 -translate-y-2"
       class="md:hidden bg-white dark:bg-black border-t border-zinc-100 dark:border-zinc-950">
       <ul class="flex flex-col px-6 py-4 gap-4 text-sm font-medium">
-        <li><a href="index.html#services" @click="mobileMenu=false"
+        <li><a href="./#services" @click="mobileMenu=false"
             class="block text-zinc-700 dark:text-zinc-300">Services</a></li>
-        <li><a href="projects.html" class="block text-accent font-medium">Work</a></li>
-        <li><a href="index.html#about" @click="mobileMenu=false"
+        <li><a href="projects" class="block text-accent font-medium">Work</a></li>
+        <li><a href="./#about" @click="mobileMenu=false"
             class="block text-zinc-700 dark:text-zinc-300">About</a></li>
-        <li><a href="blog.html" @click="mobileMenu=false" class="block text-zinc-700 dark:text-zinc-300">Blog</a></li>
-        <li><a href="index.html#contact" @click="mobileMenu=false"
+        <li><a href="blog" @click="mobileMenu=false" class="block text-zinc-700 dark:text-zinc-300">Blog</a></li>
+        <li><a href="./#contact" @click="mobileMenu=false"
             class="block text-zinc-700 dark:text-zinc-300">Contact</a></li>
       </ul>
     </div>
@@ -393,7 +399,7 @@
             <h2 class="font-display font-bold text-3xl md:text-4xl text-white mb-4">Want your project here?</h2>
             <p class="text-zinc-400 max-w-md mx-auto mb-8">I'm available for new projects. Tell me about what you're
               building and let's see if we're a good fit.</p>
-            <a href="index.html#contact"
+            <a href="./#contact"
               class="inline-flex items-center gap-2 btn-primary bg-accent text-white font-medium px-8 py-3.5 rounded-full hover:bg-accent-light transition-colors">Start
               a project &rarr;</a>
           </div>
@@ -409,7 +415,7 @@
 
         <!-- Brand/Bio -->
         <div class="md:col-span-2">
-          <a href="index.html#hero"
+          <a href="./#hero"
             class="inline-flex items-center gap-2.5 font-display font-bold text-xl tracking-tight mb-6 group">
             <svg viewBox="0 0 100 100"
               class="w-7 h-7 text-accent group-hover:rotate-90 transition-transform duration-500" fill="none"
@@ -455,11 +461,11 @@
           <h4 class="font-display font-bold text-zinc-900 dark:text-white mb-6 uppercase tracking-wider text-xs">Explore
           </h4>
           <ul class="flex flex-col gap-3.5 text-sm text-zinc-500 dark:text-zinc-400">
-            <li><a href="index.html#hero" class="hover:text-accent transition-colors">Home</a></li>
-            <li><a href="index.html#services" class="hover:text-accent transition-colors">Services</a></li>
-            <li><a href="projects.html" class="hover:text-accent transition-colors">Work</a></li>
-            <li><a href="index.html#about" class="hover:text-accent transition-colors">About</a></li>
-            <li><a href="blog.html" class="hover:text-accent transition-colors">Blog</a></li>
+            <li><a href="./#hero" class="hover:text-accent transition-colors">Home</a></li>
+            <li><a href="./#services" class="hover:text-accent transition-colors">Services</a></li>
+            <li><a href="projects" class="hover:text-accent transition-colors">Work</a></li>
+            <li><a href="./#about" class="hover:text-accent transition-colors">About</a></li>
+            <li><a href="blog" class="hover:text-accent transition-colors">Blog</a></li>
           </ul>
         </div>
 
@@ -473,7 +479,7 @@
                 target="_blank" rel="noopener noreferrer"
                 class="hover:text-accent transition-colors break-all cursor-pointer">abhishekgangwar8936@gmail.com</a></li>
             <li class="mt-2">
-              <a href="index.html#contact"
+              <a href="./#contact"
                 class="inline-flex items-center gap-1.5 text-accent font-medium hover:text-accent-light transition-colors group">
                 Let's talk
                 <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24"

@@ -12,6 +12,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
+  <script>
+    if (window.location.pathname.endsWith('.html')) {
+      var cleanUrl = window.location.pathname.replace(/\.html$/, '') + window.location.search + window.location.hash;
+      window.history.replaceState(null, '', cleanUrl);
+    }
+  </script>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Alpine.js -->

@@ -10,6 +10,12 @@
   <meta property="og:type" content="website"/>
   <title>Blog — Abhishek Gangwar</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23FF6B2B' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'><rect x='20' y='20' width='60' height='60' rx='12' transform='rotate(45 50 50)' /><path d='M35 63 L50 36 L65 63 M40 53h20' /></svg>">
+  <script>
+    if (window.location.pathname.endsWith('.html')) {
+      var cleanUrl = window.location.pathname.replace(/\.html$/, '') + window.location.search + window.location.hash;
+      window.history.replaceState(null, '', cleanUrl);
+    }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <!-- Lenis for smooth scrolling -->
@@ -67,7 +73,7 @@
   <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
     :class="scrolled?'bg-white/60 dark:bg-black/60 backdrop-blur-2xl shadow-sm shadow-black/5':'bg-transparent'">
     <nav class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between" aria-label="Main navigation">
-      <a href="index.html" class="flex items-center gap-2.5 font-display font-bold text-xl tracking-tight z-10 group" aria-label="Back to home">
+      <a href="./" class="flex items-center gap-2.5 font-display font-bold text-xl tracking-tight z-10 group" aria-label="Back to home">
         <svg viewBox="0 0 100 100" class="w-8 h-8 text-accent shrink-0 group-hover:rotate-90 transition-transform duration-500" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
           <rect x="20" y="20" width="60" height="60" rx="12" transform="rotate(45 50 50)" />
           <path d="M35 63 L50 36 L65 63 M40 53h20" />
@@ -75,18 +81,18 @@
         <span><span class="text-zinc-900 dark:text-white">Abhishek Gangwar</span><span class="text-accent">.</span></span>
       </a>
       <ul class="hidden md:flex items-center gap-8 text-sm font-medium" role="list">
-        <li><a href="index.html#services" class="nav-link text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">Services</a></li>
-        <li><a href="projects.html" class="nav-link text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">Work</a></li>
-        <li><a href="index.html#about" class="nav-link text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">About</a></li>
-        <li><a href="blog.html" class="nav-link text-accent font-medium" style="--tw-text-opacity:1">Blog</a></li>
-        <li><a href="index.html#contact" class="nav-link text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">Contact</a></li>
+        <li><a href="./#services" class="nav-link text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">Services</a></li>
+        <li><a href="projects" class="nav-link text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">Work</a></li>
+        <li><a href="./#about" class="nav-link text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">About</a></li>
+        <li><a href="blog" class="nav-link text-accent font-medium" style="--tw-text-opacity:1">Blog</a></li>
+        <li><a href="./#contact" class="nav-link text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">Contact</a></li>
       </ul>
       <div class="flex items-center gap-3">
         <button @click="dark=!dark" class="w-9 h-9 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" :aria-label="dark?'Light mode':'Dark mode'">
           <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
           <svg x-show="dark" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
         </button>
-        <a href="index.html#contact" class="hidden md:inline-flex items-center gap-2 btn-primary bg-accent text-white text-sm font-medium px-5 py-2 rounded-full hover:bg-accent-light transition-colors">
+        <a href="./#contact" class="hidden md:inline-flex items-center gap-2 btn-primary bg-accent text-white text-sm font-medium px-5 py-2 rounded-full hover:bg-accent-light transition-colors">
           Hire me <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
         </a>
         <button @click="mobileMenu=!mobileMenu" class="md:hidden w-9 h-9 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800" :aria-expanded="mobileMenu" aria-label="Toggle menu">
@@ -97,11 +103,11 @@
     </nav>
     <div x-show="mobileMenu" x-cloak x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2" class="md:hidden bg-white dark:bg-black border-t border-zinc-100 dark:border-zinc-950">
       <ul class="flex flex-col px-6 py-4 gap-4 text-sm font-medium" role="list">
-        <li><a href="index.html#services" @click="mobileMenu=false" class="block text-zinc-700 dark:text-zinc-300">Services</a></li>
-        <li><a href="projects.html" @click="mobileMenu=false" class="block text-zinc-700 dark:text-zinc-300">Work</a></li>
-        <li><a href="index.html#about" @click="mobileMenu=false" class="block text-zinc-700 dark:text-zinc-300">About</a></li>
-        <li><a href="blog.html" class="block text-accent font-medium">Blog</a></li>
-        <li><a href="index.html#contact" @click="mobileMenu=false" class="block text-zinc-700 dark:text-zinc-300">Contact</a></li>
+        <li><a href="./#services" @click="mobileMenu=false" class="block text-zinc-700 dark:text-zinc-300">Services</a></li>
+        <li><a href="projects" @click="mobileMenu=false" class="block text-zinc-700 dark:text-zinc-300">Work</a></li>
+        <li><a href="./#about" @click="mobileMenu=false" class="block text-zinc-700 dark:text-zinc-300">About</a></li>
+        <li><a href="blog" class="block text-accent font-medium">Blog</a></li>
+        <li><a href="./#contact" @click="mobileMenu=false" class="block text-zinc-700 dark:text-zinc-300">Contact</a></li>
       </ul>
     </div>
   </header>
@@ -129,7 +135,7 @@
     <!-- FEATURED ARTICLE -->
     <section class="pb-16">
       <div class="max-w-6xl mx-auto px-6">
-        <a href="blog-article.html" class="reveal group block rounded-3xl overflow-hidden bg-zinc-50 dark:bg-black border border-zinc-100 dark:border-zinc-800 hover:border-accent transition-colors">
+        <a href="blog-article" class="reveal group block rounded-3xl overflow-hidden bg-zinc-50 dark:bg-black border border-zinc-100 dark:border-zinc-800 hover:border-accent transition-colors">
           <div class="grid md:grid-cols-2">
             <div class="photo-frame h-64 md:h-auto">
               <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=900&q=80" alt="Why I ditched CSS frameworks" loading="lazy"/>
@@ -162,11 +168,11 @@
                 <span class="text-xs bg-orange-50 dark:bg-zinc-900 text-accent border border-orange-200 dark:border-zinc-800 px-2.5 py-1 rounded-full">Dev</span>
                 <span class="text-xs text-zinc-400">Feb 21, 2025</span>
               </div>
-              <a href="blog-article.html">
+              <a href="blog-article">
                 <h3 class="font-display font-bold text-lg text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">Building a design system from scratch in a weekend</h3>
               </a>
               <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-4">Tokens, components, docs — the exact process I follow to spin up a coherent design system in 48 hours.</p>
-              <a href="blog-article.html" class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nav-link">Read more →</a>
+              <a href="blog-article" class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nav-link">Read more →</a>
             </div>
           </article>
 
@@ -179,11 +185,11 @@
                 <span class="text-xs bg-orange-50 dark:bg-zinc-900 text-accent border border-orange-200 dark:border-zinc-800 px-2.5 py-1 rounded-full">Freelance</span>
                 <span class="text-xs text-zinc-400">Jan 14, 2025</span>
               </div>
-              <a href="blog-article.html">
+              <a href="blog-article">
                 <h3 class="font-display font-bold text-lg text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">5 lessons from my first year of full-time freelancing</h3>
               </a>
               <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-4">Contracts, pricing, scope creep, burnout — the things nobody tells you before you go solo.</p>
-              <a href="blog-article.html" class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nav-link">Read more →</a>
+              <a href="blog-article" class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nav-link">Read more →</a>
             </div>
           </article>
 
@@ -196,11 +202,11 @@
                 <span class="text-xs bg-orange-50 dark:bg-zinc-900 text-accent border border-orange-200 dark:border-zinc-800 px-2.5 py-1 rounded-full">Dev</span>
                 <span class="text-xs text-zinc-400">Dec 3, 2024</span>
               </div>
-              <a href="blog-article.html">
+              <a href="blog-article">
                 <h3 class="font-display font-bold text-lg text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">Alpine.js is the jQuery of the modern era — and that's a compliment</h3>
               </a>
               <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-4">No build step, no virtual DOM, no config hell. Just sprinkle some behaviour and ship.</p>
-              <a href="blog-article.html" class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nav-link">Read more →</a>
+              <a href="blog-article" class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nav-link">Read more →</a>
             </div>
           </article>
 
@@ -266,7 +272,7 @@
         
         <!-- Brand/Bio -->
         <div class="md:col-span-2">
-          <a href="index.html#hero" class="inline-flex items-center gap-2.5 font-display font-bold text-xl tracking-tight mb-6 group">
+          <a href="./#hero" class="inline-flex items-center gap-2.5 font-display font-bold text-xl tracking-tight mb-6 group">
             <svg viewBox="0 0 100 100" class="w-7 h-7 text-accent group-hover:rotate-90 transition-transform duration-500" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
               <rect x="20" y="20" width="60" height="60" rx="12" transform="rotate(45 50 50)" />
               <path d="M35 63 L50 36 L65 63 M40 53h20" />
@@ -294,11 +300,11 @@
         <div>
           <h4 class="font-display font-bold text-zinc-900 dark:text-white mb-6 uppercase tracking-wider text-xs">Explore</h4>
           <ul class="flex flex-col gap-3.5 text-sm text-zinc-500 dark:text-zinc-400">
-            <li><a href="index.html#hero" class="hover:text-accent transition-colors">Home</a></li>
-            <li><a href="index.html#services" class="hover:text-accent transition-colors">Services</a></li>
-            <li><a href="projects.html" class="hover:text-accent transition-colors">Work</a></li>
-            <li><a href="index.html#about" class="hover:text-accent transition-colors">About</a></li>
-            <li><a href="blog.html" class="hover:text-accent transition-colors">Blog</a></li>
+            <li><a href="./#hero" class="hover:text-accent transition-colors">Home</a></li>
+            <li><a href="./#services" class="hover:text-accent transition-colors">Services</a></li>
+            <li><a href="projects" class="hover:text-accent transition-colors">Work</a></li>
+            <li><a href="./#about" class="hover:text-accent transition-colors">About</a></li>
+            <li><a href="blog" class="hover:text-accent transition-colors">Blog</a></li>
           </ul>
         </div>
 
@@ -308,7 +314,7 @@
           <ul class="flex flex-col gap-3.5 text-sm text-zinc-500 dark:text-zinc-400">
             <li><a href="mailto:abhishekgangwar8936@gmail.com" onclick="window.open('https://mail.google.com/mail/?view=cm&fs=1&to=abhishekgangwar8936@gmail.com', '_blank');" target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors break-all cursor-pointer">abhishekgangwar8936@gmail.com</a></li>
             <li class="mt-2">
-              <a href="index.html#contact" class="inline-flex items-center gap-1.5 text-accent font-medium hover:text-accent-light transition-colors group">
+              <a href="./#contact" class="inline-flex items-center gap-1.5 text-accent font-medium hover:text-accent-light transition-colors group">
                 Let's talk 
                 <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
               </a>

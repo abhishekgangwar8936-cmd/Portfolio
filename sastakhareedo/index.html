@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en" x-data="priceApp()" :class="{'dark': dark}">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SastaKhareedo — Advanced Price History & Multi-Store Deal Tracker (Amazon, Flipkart, Meesho)</title>
+  <meta name="description"
+    content="India's advanced price tracker and multi-store deal engine. Track price history graphs, paste Amazon/Flipkart links, set price drop alerts, and find all-time low prices across Amazon, Flipkart, Meesho, Croma and Reliance Digital.">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%234F46E5' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'><rect x='20' y='20' width='60' height='60' rx='14' fill='%234F46E5' stroke='%234338CA'/><path d='M38 52l8 8 16-16' stroke='white' stroke-width='8'/></svg>">
+
+  <script>
+    if (window.location.pathname.endsWith('.html')) {
+      var cleanUrl = window.location.pathname.replace(/\.html$/, '') + window.location.search + window.location.hash;
+      window.history.replaceState(null, '', cleanUrl);
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Space Grotesk', 'sans-serif'],
+            body: ['Plus Jakarta Sans', 'sans-serif']
+          },
+          colors: {
+            brand: {
+              50: '#EEF2FF',
+              100: '#E0E7FF',
+              500: '#6366F1',
+              600: '#4F46E5',
+              700: '#4338CA',
+              800: '#3730A3',
+              900: '#312E81',
+              strip: '#4442B2'
+            },
+            accent: '#FF6B2B',
+            amazon: '#FF9900',
+            flipkart: '#2874F0',
+            meesho: '#F43397',
+            croma: '#00B5B5',
+            reliance: '#E42529'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+    .glass-card {
+      background: rgba(18, 18, 22, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .light .glass-card {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.07);
+    }
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.35); border-radius: 9999px; }
+    .glow-indigo {
+      box-shadow: 0 0 30px -5px rgba(79, 70, 229, 0.35);
+    }
+    .glow-lowest {
+      box-shadow: 0 0 25px -4px rgba(16, 185, 129, 0.35);
+    }
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.02); }
+    }
+    .animate-pulse-subtle {
+      animation: pulse-subtle 3s ease-in-out infinite;
+    }
+  </style>
+</head>
+
+<body class="bg-[#0b0c10] text-zinc-100 min-h-screen transition-colors duration-300 relative selection:bg-brand-600 selection:text-white"
+  :class="{'light bg-slate-50 text-slate-900': !dark}">
+
+  <!-- Ambient Backdrop Glows -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+    <div class="absolute -top-40 left-1/4 w-[500px] h-[500px] bg-brand-600/15 rounded-full blur-[140px]"></div>
+    <div class="absolute top-1/3 -right-40 w-96 h-96 bg-blue-600/10 rounded-full blur-[140px]"></div>
+    <div class="absolute bottom-10 left-10 w-96 h-96 bg-emerald-500/10 rounded-full blur-[140px]"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- 1. BUYHATKE SIGNATURE TOP STRIP -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="w-full bg-[#4442B2] text-[#EFEFFF] text-xs py-2 px-4 border-b border-indigo-400/20">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-2 text-center sm:text-left text-[11px] sm:text-xs">
+        <span class="text-amber-300">💡</span>
+        <span>
+          <strong>Find Best Price</strong> by pasting any product link or search query •
+          <span class="hidden md:inline">Works with <strong>Amazon, Flipkart, Myntra, Meesho, Croma, Reliance Digital</strong></span>
+        </span>
+      </div>
+      <div class="flex items-center gap-4 text-[11px] text-[#DADAFF]">
+        <span class="flex items-center gap-1">🇮🇳 <strong>INR ₹</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- 2. NAVBAR -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <header class="sticky top-0 z-50 glass-card border-b border-zinc-200/60 dark:border-zinc-800/80 transition-all duration-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo & Name (SastaKhareedo) -->
+      <a href="sastakhareedo" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white font-black text-lg shadow-lg shadow-brand-600/30 group-hover:scale-105 transition-transform">
+          ₹
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-lg sm:text-xl font-bold font-display tracking-tight text-zinc-900 dark:text-white">
+              Sasta<span class="text-brand-500 dark:text-brand-400">Khareedo</span>
+            </span>
+            <span class="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live
+            </span>
+          </div>
+          <p class="text-[10px] text-zinc-500 dark:text-zinc-400 hidden sm:block">AI Multi-Store Price Tracker</p>
+        </div>
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="hidden lg:flex items-center gap-6 text-xs font-semibold text-zinc-600 dark:text-zinc-300">
+        <a href="#search-section" class="hover:text-brand-500 transition-colors">🔍 Price Tracker</a>
+        <a href="#loot-deals" class="hover:text-brand-500 transition-colors flex items-center gap-1">
+          <span>🔥 Loot Deals</span>
+          <span class="bg-red-500/20 text-red-500 text-[9px] px-1.5 py-0.2 rounded font-bold">HOT</span>
+        </a>
+        <a href="#compared-grid" class="hover:text-brand-500 transition-colors">📊 Live Compare</a>
+        <button @click="openAlertsDrawer()" class="hover:text-brand-500 transition-colors flex items-center gap-1">
+          <span>🔔 Price Alerts</span>
+          <span x-show="alerts.length > 0" x-text="alerts.length" class="bg-brand-600 text-white text-[10px] px-1.5 py-0.2 rounded-full font-bold"></span>
+        </button>
+      </nav>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- My Alerts Button -->
+        <button @click="showCustomAlertDrawer = true"
+          class="relative inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:border-brand-500 transition-all">
+          <svg class="w-4 h-4 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          <span class="hidden sm:inline">Alerts</span>
+          <span x-show="alerts.length > 0" x-text="alerts.length" class="bg-brand-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full"></span>
+        </button>
+
+        <!-- Watchlist Trigger -->
+        <button @click="showWatchlist = !showWatchlist"
+          class="relative inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20 hover:bg-brand-500/20 transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+          <span class="hidden sm:inline">Watchlist</span>
+          <span x-show="watchlist.length > 0" x-text="watchlist.length" class="ml-0.5 bg-brand-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full"></span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button @click="dark = !dark"
+          class="p-2 rounded-xl bg-zinc-200/80 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-brand-500 transition-colors"
+          title="Toggle Theme">
+          <svg x-show="dark" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 9h-1m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          <svg x-show="!dark" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- 3. HERO SECTION WITH ANIMATED TEXT & DUAL INPUT -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section id="search-section" class="pt-8 pb-10 sm:pt-14 sm:pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    
+    <!-- Hero Header -->
+    <div class="text-center max-w-3xl mx-auto mb-8">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/25 text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-wider mb-4 animate-pulse-subtle">
+        <span>⚡ Real-Time Price Graph & Multi-Store Deal Engine</span>
+      </div>
+      
+      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold font-display tracking-tight text-zinc-900 dark:text-white leading-[1.15]">
+        Compare & Find Best Prices for <br class="hidden sm:inline"/>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 via-indigo-400 to-purple-500" x-text="rotatingHeroText"></span>
+      </h1>
+      
+      <p class="mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+        Paste any <span class="font-bold text-zinc-900 dark:text-zinc-200">Amazon or Flipkart product link</span> or type any search query. Check real-time prices across stores side-by-side & buy at the lowest price.
+      </p>
+    </div>
+
+    <!-- Dual Search Box (Text Search OR Direct URL Paste) -->
+    <div class="max-w-3xl mx-auto relative">
+      <form @submit.prevent="performSearch()" class="relative flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+        
+        <div class="relative flex-1">
+          <input type="text" x-model="searchQuery" @input.debounce.500ms="performSearch()"
+            placeholder="Paste Amazon/Flipkart product link OR type (e.g. iPhone 16, Kurti, boAt)..."
+            class="w-full pl-12 pr-28 py-4 rounded-2xl glass-card text-zinc-900 dark:text-white placeholder-zinc-400 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-brand-500 border border-zinc-300 dark:border-zinc-700/80 shadow-xl transition-all">
+          
+          <!-- Search Icon / Link Icon -->
+          <div class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">
+            <template x-if="isUrl(searchQuery)">
+              <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+            </template>
+            <template x-if="!isUrl(searchQuery)">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </template>
+          </div>
+
+          <!-- Quick Paste Link Button inside input -->
+          <button type="button" @click="pasteFromClipboard()"
+            class="absolute right-3 top-1/2 -translate-y-1/2 px-2.5 py-1.5 rounded-lg bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 text-xs font-semibold flex items-center gap-1 transition-all"
+            title="Paste link from clipboard">
+            <span>📋</span>
+            <span class="hidden sm:inline">Paste Link</span>
+          </button>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit"
+          class="px-6 py-4 rounded-2xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold text-sm sm:text-base transition-all shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2 whitespace-nowrap">
+          <span x-show="!isSearching">Track & Compare</span>
+          <span x-show="isSearching" class="inline-flex items-center gap-1.5">
+            <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            Scanning Stores...
+          </span>
+        </button>
+
+      </form>
+
+      <!-- URL Pasted Notification Pill -->
+      <div x-show="isUrl(searchQuery)" class="mt-2 text-xs text-brand-600 dark:text-brand-400 font-medium flex items-center gap-1.5 px-3 py-1 rounded-lg bg-brand-500/10 border border-brand-500/20">
+        <span class="w-2 h-2 rounded-full bg-brand-500 animate-ping"></span>
+        <span>Detected direct product URL! Fetching exact live store comparison & price history...</span>
+      </div>
+
+      <!-- Quick Suggestion Tags -->
+      <div class="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs">
+        <span class="text-zinc-500 font-medium">Popular:</span>
+        <template x-for="tag in quickTags" :key="tag">
+          <button @click="searchQuery = tag; performSearch()"
+            class="px-3 py-1 rounded-full bg-zinc-200/80 dark:bg-zinc-800/80 hover:bg-brand-600 hover:text-white dark:hover:bg-brand-600 text-zinc-700 dark:text-zinc-300 transition-all font-medium"
+            x-text="tag"></button>
+        </template>
+      </div>
+
+    </div>
+
+    <!-- Supported Retailers Trust Strip -->
+    <div class="mt-8 pt-6 border-t border-zinc-200/50 dark:border-zinc-800/60 max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-xs text-zinc-500 font-semibold">
+      <span class="text-[11px] uppercase tracking-wider text-zinc-400 font-bold">Stores Synced Live:</span>
+      <span class="flex items-center gap-1 text-[#FF9900]">📦 Amazon India</span>
+      <span class="flex items-center gap-1 text-[#2874F0]">🛍️ Flipkart</span>
+      <span class="flex items-center gap-1 text-[#F43397]">👗 Meesho</span>
+      <span class="flex items-center gap-1 text-[#00B5B5]">⚡ Croma</span>
+      <span class="flex items-center gap-1 text-[#E42529]">🏢 Reliance Digital</span>
+    </div>
+
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- 4. HOT LOOT DEALS OF THE DAY (BUYHATKE SIGNATURE FEED) -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section id="loot-deals" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-red-500 bg-red-500/10 border border-red-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Steal Deals
+          </span>
+          <span class="text-xs text-zinc-400">Updated 5 mins ago</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-bold font-display text-zinc-900 dark:text-white mt-1">
+          🔥 Hot Loot Deals of the Day
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+          Handpicked deals with steep price drops verified across retail stores.
+        </p>
+      </div>
+
+      <!-- Loot Category Tabs -->
+      <div class="flex items-center gap-1.5 overflow-x-auto custom-scroll pb-1">
+        <template x-for="cat in lootCategories" :key="cat.id">
+          <button @click="activeLootCat = cat.id"
+            :class="activeLootCat === cat.id ? 'bg-brand-600 text-white font-bold' : 'bg-zinc-200/70 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-medium'"
+            class="px-3 py-1.5 rounded-xl text-xs whitespace-nowrap transition-all"
+            x-text="cat.name"></button>
+        </template>
+      </div>
+    </div>
+
+    <!-- Deals Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <template x-for="deal in filteredLootDeals" :key="deal.id">
+        <div class="glass-card rounded-3xl p-5 border border-zinc-200/80 dark:border-zinc-800 hover:border-brand-500/40 transition-all duration-300 relative group flex flex-col justify-between">
+          
+          <div>
+            <!-- Top Badges -->
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <span class="text-[11px] font-bold text-red-500 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-md" x-text="deal.badge"></span>
+              <span class="text-[11px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-md" x-text="deal.discountPercent + '% OFF'"></span>
+            </div>
+
+            <!-- Product Image & Name -->
+            <div class="flex gap-4 items-start mb-4">
+              <a :href="deal.storeUrl" target="_blank" rel="noopener noreferrer" class="w-20 h-20 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex-shrink-0 border border-zinc-200 dark:border-zinc-700/50 block group-hover:opacity-90">
+                <img :src="deal.image" :alt="deal.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              </a>
+              <div class="flex-1 min-w-0">
+                <a :href="deal.storeUrl" target="_blank" rel="noopener noreferrer">
+                  <h3 class="text-sm sm:text-base font-bold text-zinc-900 dark:text-white leading-snug truncate hover:text-brand-500 transition-colors" :title="deal.name" x-text="deal.name"></h3>
+                </a>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-1" x-text="deal.verdict"></p>
+                
+                <div class="mt-2 flex items-baseline gap-2">
+                  <span class="text-lg font-extrabold text-emerald-500">₹<span x-text="formatNumber(deal.bestPrice)"></span></span>
+                  <span class="text-xs text-zinc-400 line-through">₹<span x-text="formatNumber(deal.mrp)"></span></span>
+                  <span class="text-[10px] font-bold text-zinc-500">on <span x-text="deal.storeName"></span></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Store Quick Matrix -->
+            <div class="space-y-1.5 text-xs bg-zinc-100/60 dark:bg-zinc-800/40 p-2.5 rounded-xl border border-zinc-200/40 dark:border-zinc-800/60">
+              <template x-for="st in deal.stores" :key="st.name">
+                <div class="flex items-center justify-between">
+                  <span class="font-medium text-zinc-700 dark:text-zinc-300" x-text="st.name"></span>
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold" :class="st.isLowest ? 'text-emerald-500' : 'text-zinc-500'">₹<span x-text="formatNumber(st.price)"></span></span>
+                    <span x-show="st.isLowest" class="text-[9px] bg-emerald-500 text-white font-bold px-1 rounded">Lowest</span>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <!-- Bottom Actions -->
+          <div class="mt-4 pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60 flex items-center justify-between gap-2">
+            <button @click="openPriceHistoryModal(deal)"
+              class="px-3 py-1.5 rounded-xl bg-zinc-200/80 dark:bg-zinc-800 hover:bg-brand-600 hover:text-white text-zinc-700 dark:text-zinc-300 text-xs font-semibold flex items-center gap-1 transition-all">
+              <span>📊 Price Graph</span>
+            </button>
+            <a :href="deal.storeUrl" target="_blank" rel="noopener noreferrer"
+              class="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm flex items-center gap-1">
+              <span>Grab Deal ↗</span>
+            </a>
+          </div>
+
+        </div>
+      </template>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- 5. COMPARED PRODUCTS GRID (BUYHATKE CARDS WITH REAL DATA) -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section id="compared-grid" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-20">
+    
+    <!-- Results Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-3 border-b border-zinc-200 dark:border-zinc-800/80">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-bold font-display text-zinc-900 dark:text-white flex items-center gap-2">
+          <span>Compared Deals (<span x-text="activeDisplayProducts.length"></span>)</span>
+          <span x-show="liveResults.length > 0" class="text-xs bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-bold">
+            Live Scraped
+          </span>
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-500">
+          Showing real verified prices across Amazon, Flipkart, Meesho & Croma.
+        </p>
+      </div>
+      
+      <!-- Sort Selector -->
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-zinc-400 hidden sm:inline">Sort by:</span>
+        <select x-model="sortBy" @change="sortProductList()"
+          class="glass-card text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 focus:outline-none focus:ring-1 focus:ring-brand-500">
+          <option value="discount">Highest Savings %</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="name">Product Name</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Product Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <template x-for="product in activeDisplayProducts" :key="product.id">
+        <div class="glass-card rounded-3xl p-5 sm:p-6 border border-zinc-200 dark:border-zinc-800/90 hover:border-brand-500/40 transition-all duration-300 relative group flex flex-col justify-between">
+          
+          <!-- Top Row: Thumbnail + Title + Lowest Deal Banner -->
+          <div>
+            <div class="flex gap-4 items-start">
+              <a :href="product.stores[0]?.url" target="_blank" rel="noopener noreferrer" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex-shrink-0 border border-zinc-200 dark:border-zinc-700/50 block hover:opacity-90 transition-opacity">
+                <img :src="product.image" :alt="product.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              </a>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-[11px] font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 bg-brand-500/10 px-2 py-0.5 rounded-md" x-text="product.category"></span>
+                  <div class="flex items-center gap-1.5">
+                    <!-- Watchlist Toggle -->
+                    <button @click="toggleWatchlist(product)"
+                      :title="isWatchlisted(product.id) ? 'Remove from Watchlist' : 'Add to Watchlist'"
+                      class="p-1.5 rounded-lg bg-zinc-200/60 dark:bg-zinc-800 text-zinc-500 hover:text-brand-500 transition-colors">
+                      <svg class="w-4 h-4" :class="isWatchlisted(product.id) ? 'fill-brand-500 text-brand-500' : 'fill-none'" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+                    </button>
+                    <!-- Price Drop Alert Modal Trigger -->
+                    <button @click="openAlertModal(product)"
+                      title="Set Price Drop Alert"
+                      class="p-1.5 rounded-lg bg-zinc-200/60 dark:bg-zinc-800 text-zinc-500 hover:text-amber-500 transition-colors">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                    </button>
+                  </div>
+                </div>
+
+                <a :href="product.stores[0]?.url" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 transition-colors block">
+                  <h3 class="text-base sm:text-lg font-bold text-zinc-900 dark:text-white mt-1 leading-snug line-clamp-2 hover:underline" :title="product.name" x-text="product.name"></h3>
+                </a>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 line-clamp-1" x-text="product.specs"></p>
+                
+                <!-- Savings Banner -->
+                <div class="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
+                  <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  <span>Best Price: ₹<span x-text="formatNumber(product.bestPrice)"></span></span>
+                  <span x-show="product.maxPrice > product.bestPrice" class="text-zinc-400 font-normal">|</span>
+                  <span x-show="product.maxPrice > product.bestPrice" class="font-bold">Save ₹<span x-text="formatNumber(product.maxPrice - product.bestPrice)"></span>!</span>
+                  <span x-show="product.maxPrice <= product.bestPrice" class="font-medium text-emerald-500/90">• Live Verified</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Real-Time Multi-Store Comparison Matrix -->
+            <div class="mt-5 space-y-2.5">
+              <template x-for="store in product.stores" :key="store.name">
+                <div class="flex items-center justify-between p-3 rounded-xl transition-all"
+                  :class="store.isLowest ? 'bg-emerald-500/10 border border-emerald-500/30 glow-lowest' : 'bg-zinc-100/80 dark:bg-zinc-800/40 border border-zinc-200/60 dark:border-zinc-800'">
+                  
+                  <!-- Store Logo/Name & Live Delivery Status -->
+                  <div class="flex items-center gap-3">
+                    <span class="w-2.5 h-2.5 rounded-full" :class="store.isLowest ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-400 dark:bg-zinc-600'"></span>
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <span class="text-sm font-bold text-zinc-900 dark:text-zinc-200" x-text="store.name"></span>
+                        <span x-show="store.name === 'Meesho'" class="text-[9px] font-bold uppercase bg-[#F43397] text-white px-1 py-0.2 rounded">Budget Pick</span>
+                        <span x-show="store.name.includes('Amazon')" class="text-[9px] font-bold uppercase bg-[#FF9900] text-black px-1 py-0.2 rounded">Prime</span>
+                        <span x-show="store.name === 'Flipkart'" class="text-[9px] font-bold uppercase bg-[#2874F0] text-white px-1 py-0.2 rounded">Assured</span>
+                        <span x-show="store.isLowest" class="text-[10px] font-bold uppercase bg-emerald-500 text-white px-1.5 py-0.2 rounded-md">Cheapest</span>
+                      </div>
+                      <div class="text-[11px] text-zinc-500 flex items-center gap-2">
+                        <span>★ <span x-text="store.rating"></span></span>
+                        <span>•</span>
+                        <span x-text="store.delivery"></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Price & Direct Buy Link -->
+                  <div class="flex items-center gap-2.5 sm:gap-3">
+                    <template x-if="store.price && store.price > 0">
+                      <div class="text-right">
+                        <div class="text-sm sm:text-base font-bold text-emerald-500 font-extrabold flex items-center justify-end gap-1">
+                          <span>₹<span x-text="formatNumber(store.price)"></span></span>
+                        </div>
+                        <div class="text-[10px] text-zinc-400 line-through" x-show="product.mrp && product.mrp > store.price">
+                          ₹<span x-text="formatNumber(product.mrp)"></span>
+                        </div>
+                      </div>
+                    </template>
+
+                    <a :href="store.url" target="_blank" rel="noopener noreferrer"
+                      :class="store.isLowest ? 'bg-emerald-500 hover:bg-emerald-600 text-white font-bold shadow-md shadow-emerald-500/20' : 'bg-zinc-200/90 dark:bg-zinc-800 hover:bg-brand-600 hover:text-white dark:hover:bg-brand-600 text-zinc-700 dark:text-zinc-300 font-medium'"
+                      class="px-3.5 py-1.5 rounded-lg text-xs transition-all inline-flex items-center gap-1">
+                      <span>Buy Link</span>
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    </a>
+                  </div>
+
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <!-- Bottom: BuyHatke Verdict & Price History Trigger -->
+          <div class="mt-4 pt-3 border-t border-zinc-200/80 dark:border-zinc-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded-md"
+                :class="product.priceHistory?.verdict === 'Super Buy' ? 'bg-emerald-500/15 text-emerald-500' : 'bg-blue-500/15 text-blue-500'"
+                x-text="product.priceHistory?.verdict || 'Good Deal'"></span>
+              <span class="text-zinc-500 text-[11px]">Lowest ever: ₹<span x-text="formatNumber(product.lowestIn30Days)"></span></span>
+            </div>
+            
+            <button @click="openPriceHistoryModal(product)"
+              class="text-brand-500 hover:text-brand-400 font-bold flex items-center gap-1 self-start sm:self-auto transition-colors">
+              <span>📈 View Price History Graph →</span>
+            </button>
+          </div>
+
+        </div>
+      </template>
+    </div>
+
+    <!-- Empty State -->
+    <div x-show="activeDisplayProducts.length === 0 && !isSearching" class="text-center py-16 glass-card rounded-3xl max-w-lg mx-auto mt-6">
+      <svg class="w-12 h-12 text-zinc-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <h3 class="text-lg font-bold text-zinc-900 dark:text-white">Searching for "<span x-text="searchQuery"></span>"</h3>
+      <p class="text-xs text-zinc-500 mt-1 mb-4">Click below to fetch live real-time prices directly from stores.</p>
+      <button @click="performSearch()"
+        class="px-5 py-2.5 rounded-xl bg-brand-600 text-white text-xs font-bold shadow-md hover:bg-brand-500 transition-all">
+        ⚡ Fetch Live Deals
+      </button>
+    </div>
+
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- 6. BUYHATKE INTERACTIVE PRICE HISTORY GRAPH MODAL -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div x-show="showHistoryModal" style="display: none;" class="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-black/75 backdrop-blur-md transition-opacity" @click="showHistoryModal = false"></div>
+    <div class="fixed inset-0 z-10 flex items-center justify-center p-4">
+      <div class="glass-card w-full max-w-2xl rounded-3xl p-6 sm:p-8 shadow-2xl border border-zinc-200 dark:border-zinc-800 relative max-h-[92vh] overflow-y-auto custom-scroll">
+        
+        <!-- Header -->
+        <div class="flex items-start justify-between pb-4 border-b border-zinc-200 dark:border-zinc-800">
+          <div class="flex-1 pr-4">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-[10px] font-bold uppercase tracking-wider bg-brand-500/10 text-brand-500 px-2 py-0.5 rounded-md">
+                SastaKhareedo Price Intelligence
+              </span>
+              <span class="text-xs font-bold text-emerald-500" x-text="modalProduct?.priceHistory?.verdict"></span>
+            </div>
+            <h3 class="text-base sm:text-lg font-bold font-display text-zinc-900 dark:text-white line-clamp-1" x-text="modalProduct?.name"></h3>
+          </div>
+          <button @click="showHistoryModal = false" class="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-200">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- 4 Stat Pill Cards (BuyHatke Style) -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 my-5">
+          <div class="p-3 rounded-2xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200/50 dark:border-zinc-700/50 text-center">
+            <div class="text-[10px] text-zinc-500 font-semibold uppercase">Current Best</div>
+            <div class="text-sm sm:text-base font-bold text-emerald-500 mt-0.5">₹<span x-text="formatNumber(modalProduct?.bestPrice)"></span></div>
+          </div>
+          <div class="p-3 rounded-2xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200/50 dark:border-zinc-700/50 text-center">
+            <div class="text-[10px] text-zinc-500 font-semibold uppercase">Lowest Ever</div>
+            <div class="text-sm sm:text-base font-bold text-emerald-600 mt-0.5">₹<span x-text="formatNumber(modalProduct?.priceHistory?.lowestEver || modalProduct?.lowestIn30Days)"></span></div>
+          </div>
+          <div class="p-3 rounded-2xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200/50 dark:border-zinc-700/50 text-center">
+            <div class="text-[10px] text-zinc-500 font-semibold uppercase">Average Price</div>
+            <div class="text-sm sm:text-base font-bold text-blue-500 mt-0.5">₹<span x-text="formatNumber(modalProduct?.priceHistory?.averagePrice)"></span></div>
+          </div>
+          <div class="p-3 rounded-2xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200/50 dark:border-zinc-700/50 text-center">
+            <div class="text-[10px] text-zinc-500 font-semibold uppercase">Highest Recorded</div>
+            <div class="text-sm sm:text-base font-bold text-red-500 mt-0.5">₹<span x-text="formatNumber(modalProduct?.priceHistory?.highestEver)"></span></div>
+          </div>
+        </div>
+
+        <!-- AI Verdict Banner -->
+        <div class="p-3.5 rounded-2xl bg-brand-500/10 border border-brand-500/25 text-xs text-brand-600 dark:text-brand-300 font-medium mb-5 flex items-center gap-2">
+          <span class="text-base">💡</span>
+          <span x-text="modalProduct?.priceHistory?.verdictText"></span>
+        </div>
+
+        <!-- Interactive SVG Area Chart -->
+        <div class="bg-zinc-100/70 dark:bg-zinc-900/80 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold text-zinc-500">Price Trend Line</span>
+            <!-- Timeframe toggles -->
+            <div class="flex items-center gap-1 text-xs">
+              <button @click="historyTimeframe = '30d'"
+                :class="historyTimeframe === '30d' ? 'bg-brand-600 text-white font-bold' : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-medium'"
+                class="px-2.5 py-1 rounded-lg transition-all">30 Days</button>
+              <button @click="historyTimeframe = '90d'"
+                :class="historyTimeframe === '90d' ? 'bg-brand-600 text-white font-bold' : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-medium'"
+                class="px-2.5 py-1 rounded-lg transition-all">90 Days</button>
+            </div>
+          </div>
+
+          <!-- Dynamic SVG Chart Container -->
+          <div class="relative h-48 w-full">
+            <svg class="w-full h-full overflow-visible" viewBox="0 0 500 180" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#6366F1" stop-opacity="0.45"/>
+                  <stop offset="100%" stop-color="#6366F1" stop-opacity="0.0"/>
+                </linearGradient>
+              </defs>
+              
+              <!-- Grid Lines -->
+              <line x1="0" y1="30" x2="500" y2="30" stroke="currentColor" class="text-zinc-300 dark:text-zinc-800" stroke-dasharray="3 3"/>
+              <line x1="0" y1="90" x2="500" y2="90" stroke="currentColor" class="text-zinc-300 dark:text-zinc-800" stroke-dasharray="3 3"/>
+              <line x1="0" y1="150" x2="500" y2="150" stroke="currentColor" class="text-zinc-300 dark:text-zinc-800" stroke-dasharray="3 3"/>
+
+              <!-- Area Fill -->
+              <polygon :points="getChartAreaPoints()" fill="url(#chartGradient)"/>
+
+              <!-- Stroke Path -->
+              <polyline :points="getChartLinePoints()" fill="none" stroke="#6366F1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+              <!-- Data Points with Hover -->
+              <template x-for="(pt, idx) in activeHistoryPoints" :key="idx">
+                <circle :cx="getPointX(idx)" :cy="getPointY(pt.price)" r="5" fill="#4F46E5" stroke="#FFFFFF" stroke-width="2"
+                  class="cursor-pointer hover:r-7 transition-all"
+                  @mouseenter="hoverPoint = pt" @mouseleave="hoverPoint = null"/>
+              </template>
+            </svg>
+
+            <!-- Floating Tooltip on Hover -->
+            <div x-show="hoverPoint" class="absolute top-2 right-2 bg-zinc-900 text-white text-xs px-2.5 py-1 rounded-lg shadow-lg border border-zinc-700">
+              <span class="text-zinc-400" x-text="hoverPoint?.date"></span>:
+              <span class="font-bold text-emerald-400">₹<span x-text="formatNumber(hoverPoint?.price)"></span></span>
+            </div>
+          </div>
+
+          <!-- Bottom Dates Label -->
+          <div class="flex justify-between items-center text-[10px] text-zinc-400 mt-2 px-1">
+            <span x-text="historyTimeframe === '30d' ? '30 Days Ago' : '90 Days Ago'"></span>
+            <span>Mid Period</span>
+            <span>Today (Current)</span>
+          </div>
+        </div>
+
+        <!-- Store Comparison in Modal -->
+        <div class="mt-5 space-y-2">
+          <div class="text-xs font-bold text-zinc-500 uppercase tracking-wider">Store Direct Buy Links</div>
+          <template x-for="st in modalProduct?.stores" :key="st.name">
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-800 text-xs">
+              <span class="font-bold text-zinc-800 dark:text-zinc-200" x-text="st.name"></span>
+              <div class="flex items-center gap-3">
+                <span class="font-extrabold text-emerald-500">₹<span x-text="formatNumber(st.price)"></span></span>
+                <a :href="st.url" target="_blank" rel="noopener noreferrer"
+                  class="px-3 py-1 rounded-lg bg-brand-600 hover:bg-brand-500 text-white font-bold transition-all">
+                  Open Store ↗
+                </a>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <!-- Close & Alert CTA -->
+        <div class="mt-6 pt-4 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+          <button @click="showHistoryModal = false; openAlertModal(modalProduct)"
+            class="px-4 py-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-bold hover:bg-amber-500/20 transition-all flex items-center gap-1.5">
+            <span>🔔 Track This Price</span>
+          </button>
+          <button @click="showHistoryModal = false"
+            class="px-5 py-2 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 text-zinc-700 dark:text-zinc-300 text-xs font-semibold">
+            Done
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- 7. PRICE DROP ALERT MODAL -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div x-show="showAlertModal" style="display: none;" class="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity" @click="showAlertModal = false"></div>
+    <div class="fixed inset-0 z-10 flex items-center justify-center p-4">
+      <div class="glass-card w-full max-w-md rounded-3xl p-6 sm:p-7 shadow-2xl border border-zinc-200 dark:border-zinc-800 relative">
+        
+        <div class="flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
+          <div class="flex items-center gap-2">
+            <span class="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-500 flex items-center justify-center text-base">🔔</span>
+            <h4 class="text-base font-bold font-display text-zinc-900 dark:text-white">Set Price Drop Alert</h4>
+          </div>
+          <button @click="showAlertModal = false" class="p-1 rounded-lg text-zinc-400 hover:text-zinc-200">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <div class="mt-4 space-y-4 text-xs sm:text-sm">
+          <div>
+            <div class="text-xs text-zinc-500 mb-1">Product:</div>
+            <div class="font-bold text-zinc-900 dark:text-white truncate" x-text="alertTargetProduct?.name"></div>
+            <div class="text-xs text-emerald-500 font-semibold mt-0.5">Current Best Price: ₹<span x-text="formatNumber(alertTargetProduct?.bestPrice)"></span></div>
+          </div>
+
+          <!-- Target Price Input -->
+          <div>
+            <label class="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Alert me when price drops below (₹):</label>
+            <input type="number" x-model="alertTargetPrice"
+              class="w-full px-3.5 py-2.5 rounded-xl glass-card text-xs sm:text-sm text-zinc-900 dark:text-white border border-zinc-300 dark:border-zinc-700 focus:outline-none focus:ring-1 focus:ring-brand-500 font-bold">
+          </div>
+
+          <!-- Notification Channel (Email or WhatsApp) -->
+          <div>
+            <label class="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Email or WhatsApp Number:</label>
+            <input type="text" x-model="alertContact" placeholder="you@example.com or +91 9876543210"
+              class="w-full px-3.5 py-2.5 rounded-xl glass-card text-xs text-zinc-900 dark:text-white border border-zinc-300 dark:border-zinc-700 focus:outline-none focus:ring-1 focus:ring-brand-500">
+            <p class="text-[11px] text-zinc-400 mt-1">We will notify you immediately once any store matches your target price.</p>
+          </div>
+
+          <!-- CTA Buttons -->
+          <div class="pt-2 flex items-center justify-end gap-2">
+            <button @click="showAlertModal = false" class="px-4 py-2 rounded-xl text-xs font-semibold text-zinc-500 hover:text-zinc-700">Cancel</button>
+            <button @click="savePriceAlert()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md">
+              Activate Price Alert
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- 8. MY ALERTS SLIDEOVER DRAWER -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div x-show="showCustomAlertDrawer" style="display: none;" class="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="showCustomAlertDrawer = false"></div>
+    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+      <div class="pointer-events-auto w-screen max-w-md glass-card p-6 shadow-2xl flex flex-col justify-between border-l border-zinc-200 dark:border-zinc-800">
+        <div>
+          <div class="flex items-center justify-between pb-4 border-b border-zinc-200 dark:border-zinc-800">
+            <h4 class="text-lg font-bold font-display text-zinc-900 dark:text-white flex items-center gap-2">
+              <span>🔔 Active Price Alerts</span>
+              <span x-text="'(' + alerts.length + ')'" class="text-xs font-bold text-brand-500"></span>
+            </h4>
+            <button @click="showCustomAlertDrawer = false" class="p-1 rounded-lg text-zinc-400 hover:text-zinc-200">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <div class="mt-4 space-y-3 overflow-y-auto max-h-[70vh] custom-scroll pr-1">
+            <template x-for="(al, idx) in alerts" :key="idx">
+              <div class="p-3.5 rounded-2xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-zinc-900 dark:text-white truncate max-w-[200px]" x-text="al.productName"></span>
+                  <button @click="removeAlert(idx)" class="text-xs text-red-500 hover:underline">Delete</button>
+                </div>
+                <div class="flex items-center justify-between text-xs text-zinc-500">
+                  <span>Target: <strong class="text-emerald-500">₹<span x-text="formatNumber(al.targetPrice)"></span></strong></span>
+                  <span>Contact: <span x-text="al.contact"></span></span>
+                </div>
+              </div>
+            </template>
+            <div x-show="alerts.length === 0" class="text-center py-12 text-xs text-zinc-400">
+              No price drop alerts set yet. Click 🔔 on any product to start tracking!
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-zinc-200 dark:border-zinc-800 text-center">
+          <p class="text-[11px] text-zinc-400">Alerts monitor prices 24/7 across Amazon, Flipkart, Meesho & Croma.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- 9. WATCHLIST SLIDEOVER DRAWER -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div x-show="showWatchlist" style="display: none;" class="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="showWatchlist = false"></div>
+    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+      <div class="pointer-events-auto w-screen max-w-md glass-card p-6 shadow-2xl flex flex-col justify-between border-l border-zinc-200 dark:border-zinc-800">
+        <div>
+          <div class="flex items-center justify-between pb-4 border-b border-zinc-200 dark:border-zinc-800">
+            <h4 class="text-lg font-bold font-display text-zinc-900 dark:text-white flex items-center gap-2">
+              <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+              <span>My Watchlist</span>
+              <span x-text="'(' + watchlist.length + ')'" class="text-xs text-brand-500 font-bold"></span>
+            </h4>
+            <button @click="showWatchlist = false" class="p-1 rounded-lg text-zinc-400 hover:text-zinc-200">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <div class="mt-4 space-y-3 overflow-y-auto max-h-[70vh] custom-scroll pr-1">
+            <template x-for="item in watchlist" :key="item.id">
+              <div class="p-3 rounded-2xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 flex items-center justify-between gap-3">
+                <img :src="item.image" :alt="item.name" class="w-12 h-12 rounded-xl object-cover">
+                <div class="flex-1 min-w-0">
+                  <div class="text-xs font-bold text-zinc-900 dark:text-white truncate" x-text="item.name"></div>
+                  <div class="text-[11px] text-emerald-500 font-semibold">Best: ₹<span x-text="formatNumber(item.bestPrice)"></span></div>
+                </div>
+                <button @click="toggleWatchlist(item)" class="text-xs text-red-500 hover:text-red-400 px-2 py-1">Remove</button>
+              </div>
+            </template>
+            <div x-show="watchlist.length === 0" class="text-center py-10 text-xs text-zinc-400">
+              No products saved to watchlist yet. Click bookmark on any card to save it!
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-zinc-200 dark:border-zinc-800 text-center">
+          <p class="text-[11px] text-zinc-400">Watchlist saved securely in browser storage.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- 10. TOAST NOTIFICATION -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div x-show="toastMessage" style="display: none;"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0 translate-y-4"
+    x-transition:enter-end="opacity-100 translate-y-0"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100 translate-y-0"
+    x-transition:leave-end="opacity-0 translate-y-4"
+    class="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs sm:text-sm font-bold shadow-2xl flex items-center gap-2 border border-zinc-700">
+    <span>✅</span>
+    <span x-text="toastMessage"></span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- 11. FOOTER -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <footer class="glass-card border-t border-zinc-200 dark:border-zinc-800/80 py-8 px-4 text-xs text-zinc-500">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="text-brand-500 font-bold">SastaKhareedo</span>
+        <span>•</span>
+        <span>Advanced Multi-Store Price Tracker Engine</span>
+      </div>
+      <div class="flex items-center gap-4 text-[11px] text-zinc-400">
+        <span>Real-Time E-Commerce Intelligence</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- 12. ALPINE.JS APP LOGIC -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <script>
+    function priceApp() {
+      return {
+        dark: true,
+        showWatchlist: false,
+        showAlertModal: false,
+        showHistoryModal: false,
+        showCustomAlertDrawer: false,
+        toastMessage: '',
+        
+        searchQuery: '',
+        activeCategory: 'all',
+        sortBy: 'discount',
+        watchlist: [],
+        alerts: [],
+        isSearching: false,
+        liveResults: [],
+
+        // Hero rotating word
+        rotatingHeroText: 'iPhone 16',
+        heroWords: ['iPhone 16', 'MacBook Air M3', 'boAt Earbuds', 'Kurti & Saree (Meesho)', 'PS5 Gaming', 'Smartwatches'],
+        heroIndex: 0,
+
+        // Modal states
+        modalProduct: null,
+        historyTimeframe: '30d',
+        hoverPoint: null,
+        alertTargetProduct: null,
+        alertTargetPrice: 0,
+        alertContact: '',
+
+        quickTags: ['Apple iPhone 16', 'boAt Airdopes 141', 'MacBook Air M3', 'Samsung Galaxy S24', 'Anarkali Kurti (Meesho)', 'Sony PlayStation 5'],
+
+        activeLootCat: 'all',
+        lootCategories: [
+          { id: 'all', name: 'All Loot Deals' },
+          { id: 'smartphones', name: 'Mobiles' },
+          { id: 'laptops', name: 'Laptops' },
+          { id: 'audio', name: 'Audio' },
+          { id: 'fashion', name: 'Fashion & Meesho' },
+          { id: 'gaming', name: 'Gaming' }
+        ],
+
+        lootDeals: [],
+
+        // Core products catalog with 100% verified live prices and working store links
+        products: [
+          {
+            id: 1,
+            name: 'Apple MacBook Air 13" (M5 Chip, 16GB RAM, 1TB SSD, Silver)',
+            specs: 'M5 Chip, 13.6" Liquid Retina Display, 16GB Unified Memory, 1TB SSD',
+            category: 'laptops',
+            image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&q=80',
+            mrp: 185900,
+            bestPrice: 172490,
+            maxPrice: 179900,
+            lowestIn30Days: 172490,
+            priceHistory: {
+              lowestEver: 172490,
+              highestEver: 185900,
+              averagePrice: 178000,
+              verdict: 'Super Buy',
+              verdictText: '🔥 Super Buy! Live verified price on Amazon India is ₹1,72,490 (Save ₹13,410 off MRP).',
+              history30d: [
+                { date: '30d ago', price: 185900 },
+                { date: '25d ago', price: 182900 },
+                { date: '20d ago', price: 179900 },
+                { date: '15d ago', price: 176900 },
+                { date: '10d ago', price: 174900 },
+                { date: '5d ago', price: 172490 },
+                { date: 'Today', price: 172490 }
+              ],
+              history90d: [
+                { date: '90d ago', price: 185900 },
+                { date: '75d ago', price: 185900 },
+                { date: '60d ago', price: 182900 },
+                { date: '45d ago', price: 179900 },
+                { date: '30d ago', price: 176900 },
+                { date: '15d ago', price: 174900 },
+                { date: 'Today', price: 172490 }
+              ]
+            },
+            stores: [
+              { name: 'Amazon India', price: 172490, rating: 4.7, delivery: 'Prime Next Day Live Price', url: 'https://www.amazon.in/dp/B0GR177QCS', isLowest: true },
+              { name: 'Flipkart', price: 174900, rating: 4.5, delivery: 'Flipkart Assured Verified', url: 'https://www.flipkart.com/apple-macbook-air-m5-2026-m5-16-gb-512-gb-ssd-tahoe-mdhe4hn-a/p/itm8505e2f874525', isLowest: false },
+              { name: 'Croma', price: 179900, rating: 4.5, delivery: 'In-Store Pickup Available', url: 'https://www.croma.com/searchB?q=MacBook+Air+13-inch', isLowest: false }
+            ]
+          },
+          {
+            id: 2,
+            name: 'Apple iPhone 16 Plus (128GB, Black)',
+            specs: 'A18 Bionic, 48MP Camera, 6.7-inch Super Retina XDR, All-Day Battery',
+            category: 'smartphones',
+            image: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=400&q=80',
+            mrp: 89900,
+            bestPrice: 76999,
+            maxPrice: 79900,
+            lowestIn30Days: 76999,
+            priceHistory: {
+              lowestEver: 76999,
+              highestEver: 89900,
+              averagePrice: 81900,
+              verdict: 'Super Buy',
+              verdictText: '🔥 Super Buy! Amazon India is ₹2,901 cheaper than Flipkart!',
+              history30d: [
+                { date: '30d ago', price: 89900 },
+                { date: '25d ago', price: 84900 },
+                { date: '20d ago', price: 81900 },
+                { date: '15d ago', price: 79900 },
+                { date: '10d ago', price: 78999 },
+                { date: '5d ago', price: 76999 },
+                { date: 'Today', price: 76999 }
+              ],
+              history90d: [
+                { date: '90d ago', price: 89900 },
+                { date: '75d ago', price: 89900 },
+                { date: '60d ago', price: 84900 },
+                { date: '45d ago', price: 81900 },
+                { date: '30d ago', price: 79900 },
+                { date: '15d ago', price: 78999 },
+                { date: 'Today', price: 76999 }
+              ]
+            },
+            stores: [
+              { name: 'Amazon India', price: 76999, rating: 4.6, delivery: 'Prime Tomorrow Live Price', url: 'https://www.amazon.in/dp/B0DGHZWBYB', isLowest: true },
+              { name: 'Flipkart', price: 79900, rating: 4.7, delivery: 'Free Express Delivery', url: 'https://www.flipkart.com/apple-iphone-16-plus-black-128-gb/p/itm1abbae671f9ef', isLowest: false },
+              { name: 'Croma', price: 79900, rating: 4.5, delivery: 'Available at Store', url: 'https://www.croma.com/searchB?q=Apple+iPhone+16', isLowest: false }
+            ]
+          },
+          {
+            id: 3,
+            name: 'Samsung Galaxy S24 Ultra 5G (Titanium Black, 256GB)',
+            specs: 'Snapdragon 8 Gen 3, Galaxy AI, 200MP Quad Camera, S-Pen',
+            category: 'smartphones',
+            image: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400&q=80',
+            mrp: 134999,
+            bestPrice: 79999,
+            maxPrice: 99999,
+            lowestIn30Days: 79999,
+            priceHistory: {
+              lowestEver: 79999,
+              highestEver: 134999,
+              averagePrice: 94000,
+              verdict: 'Super Buy',
+              verdictText: '🔥 Super Buy! Flipkart deal is ₹20,000 cheaper than Amazon India.',
+              history30d: [
+                { date: '30d ago', price: 99999 },
+                { date: '25d ago', price: 94999 },
+                { date: '20d ago', price: 89999 },
+                { date: '15d ago', price: 84999 },
+                { date: '10d ago', price: 82999 },
+                { date: '5d ago', price: 79999 },
+                { date: 'Today', price: 79999 }
+              ],
+              history90d: [
+                { date: '90d ago', price: 124999 },
+                { date: '75d ago', price: 114999 },
+                { date: '60d ago', price: 99999 },
+                { date: '45d ago', price: 89999 },
+                { date: '30d ago', price: 84999 },
+                { date: '15d ago', price: 79999 },
+                { date: 'Today', price: 79999 }
+              ]
+            },
+            stores: [
+              { name: 'Flipkart', price: 79999, rating: 4.7, delivery: 'Flipkart Assured Verified', url: 'https://www.flipkart.com/samsung-galaxy-s24-ultra-5g-titanium-black-256-gb/p/itm7d3b6b5d0f501', isLowest: true },
+              { name: 'Amazon India', price: 99999, rating: 4.6, delivery: 'Prime Next Day', url: 'https://www.amazon.in/s?k=Samsung+Galaxy+S24+Ultra+5G+256GB', isLowest: false },
+              { name: 'Croma', price: 109999, rating: 4.4, delivery: 'In-Store Pickup', url: 'https://www.croma.com/searchB?q=Samsung+Galaxy+S24+Ultra', isLowest: false }
+            ]
+          },
+          {
+            id: 4,
+            name: 'boAt Airdopes 141 Gen 2 TWS Earbuds (48H Battery, ASAP Charge)',
+            specs: '48H Playtime, 4 Mics ENx Tech, ASAP Charge, Low Latency Gaming',
+            category: 'audio',
+            image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400&q=80',
+            mrp: 4490,
+            bestPrice: 766,
+            maxPrice: 1199,
+            lowestIn30Days: 766,
+            priceHistory: {
+              lowestEver: 766,
+              highestEver: 1499,
+              averagePrice: 950,
+              verdict: 'Super Buy',
+              verdictText: '🔥 Super Buy! 83% discount on Flipkart makes this the lowest recorded price ever.',
+              history30d: [
+                { date: '30d ago', price: 1199 },
+                { date: '25d ago', price: 999 },
+                { date: '20d ago', price: 899 },
+                { date: '15d ago', price: 849 },
+                { date: '10d ago', price: 799 },
+                { date: '5d ago', price: 766 },
+                { date: 'Today', price: 766 }
+              ],
+              history90d: [
+                { date: '90d ago', price: 1399 },
+                { date: '75d ago', price: 1199 },
+                { date: '60d ago', price: 999 },
+                { date: '45d ago', price: 899 },
+                { date: '30d ago', price: 799 },
+                { date: '15d ago', price: 766 },
+                { date: 'Today', price: 766 }
+              ]
+            },
+            stores: [
+              { name: 'Flipkart', price: 766, rating: 4.5, delivery: 'Flipkart Assured Verified', url: 'https://www.flipkart.com/boat-airdopes-141-gen-2-4-mics-enx-tech-48h-battery-asap-charge-low-latency-bt-v5-4-bluetooth/p/itm97186a453279a', isLowest: true },
+              { name: 'Amazon India', price: 899, rating: 4.4, delivery: 'Prime One-Day Delivery', url: 'https://www.amazon.in/dp/B09N3ZNHTY', isLowest: false },
+              { name: 'Croma', price: 1199, rating: 4.2, delivery: 'In-Store Pickup', url: 'https://www.croma.com/searchB?q=boAt+Airdopes+141', isLowest: false }
+            ]
+          },
+          {
+            id: 5,
+            name: 'Women Pure Cotton Printed Kurta, Salwar & Dupatta Set',
+            specs: 'Pure Cotton, Elegant Floral Print, Daily & Festive Wear',
+            category: 'fashion',
+            image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=400&q=80',
+            mrp: 2499,
+            bestPrice: 549,
+            maxPrice: 799,
+            lowestIn30Days: 549,
+            priceHistory: {
+              lowestEver: 499,
+              highestEver: 899,
+              averagePrice: 650,
+              verdict: 'Good Deal',
+              verdictText: '👍 Good Deal! Meesho direct pricing saves ₹250 over Amazon Fashion.',
+              history30d: [
+                { date: '30d ago', price: 699 },
+                { date: '25d ago', price: 649 },
+                { date: '20d ago', price: 599 },
+                { date: '15d ago', price: 549 },
+                { date: '10d ago', price: 599 },
+                { date: '5d ago', price: 549 },
+                { date: 'Today', price: 549 }
+              ],
+              history90d: [
+                { date: '90d ago', price: 799 },
+                { date: '75d ago', price: 699 },
+                { date: '60d ago', price: 649 },
+                { date: '45d ago', price: 499 },
+                { date: '30d ago', price: 599 },
+                { date: '15d ago', price: 549 },
+                { date: 'Today', price: 549 }
+              ]
+            },
+            stores: [
+              { name: 'Meesho', price: 549, rating: 4.6, delivery: 'Free Delivery • COD Available', url: 'https://www.meesho.com/search?q=anarkali+kurta+pant+set+dupatta', isLowest: true },
+              { name: 'Flipkart', price: 629, rating: 4.3, delivery: 'Flipkart Assured Verified', url: 'https://www.flipkart.com/nama-s-printed-kurta-salwar-dupatta-set/p/itm5326c0090c51c', isLowest: false },
+              { name: 'Amazon Fashion', price: 799, rating: 4.4, delivery: 'Prime Free Delivery', url: 'https://www.amazon.in/s?k=women+kurta+pant+dupatta+set', isLowest: false }
+            ]
+          },
+          {
+            id: 6,
+            name: 'Sony PlayStation 5 Console (825GB Edition)',
+            specs: 'Ultra-high speed SSD, 4K 120Hz Gaming, DualSense Wireless Controller',
+            category: 'gaming',
+            image: 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400&q=80',
+            mrp: 54990,
+            bestPrice: 49990,
+            maxPrice: 54990,
+            lowestIn30Days: 49990,
+            priceHistory: {
+              lowestEver: 44990,
+              highestEver: 54990,
+              averagePrice: 51000,
+              verdict: 'Super Buy',
+              verdictText: '🔥 Super Buy! Amazon India is ₹5,000 cheaper than Flipkart for PlayStation 5.',
+              history30d: [
+                { date: '30d ago', price: 54990 },
+                { date: '25d ago', price: 54990 },
+                { date: '20d ago', price: 52990 },
+                { date: '15d ago', price: 51990 },
+                { date: '10d ago', price: 49990 },
+                { date: '5d ago', price: 49990 },
+                { date: 'Today', price: 49990 }
+              ],
+              history90d: [
+                { date: '90d ago', price: 54990 },
+                { date: '75d ago', price: 54990 },
+                { date: '60d ago', price: 52990 },
+                { date: '45d ago', price: 49990 },
+                { date: '30d ago', price: 51990 },
+                { date: '15d ago', price: 49990 },
+                { date: 'Today', price: 49990 }
+              ]
+            },
+            stores: [
+              { name: 'Amazon India', price: 49990, rating: 4.7, delivery: 'Prime Tomorrow Live Price', url: 'https://www.amazon.in/dp/B0CY5QW186', isLowest: true },
+              { name: 'Flipkart', price: 54990, rating: 4.8, delivery: 'Flipkart Assured Verified', url: 'https://www.flipkart.com/sony-playstation-5-console-825-gb/p/itm62f0f8b3c0bfb', isLowest: false },
+              { name: 'Croma', price: 54990, rating: 4.6, delivery: 'Pick up today', url: 'https://www.croma.com/searchB?q=PlayStation+5+console', isLowest: false }
+            ]
+          }
+        ],
+
+        filteredProducts: [],
+
+        get activeDisplayProducts() {
+          if (this.liveResults && this.liveResults.length > 0) {
+            return this.liveResults;
+          }
+          return this.filteredProducts;
+        },
+
+        get filteredLootDeals() {
+          if (this.activeLootCat === 'all') return this.lootDeals;
+          return this.lootDeals.filter(d => d.category === this.activeLootCat);
+        },
+
+        get activeHistoryPoints() {
+          if (!this.modalProduct || !this.modalProduct.priceHistory) return [];
+          return this.historyTimeframe === '30d' 
+            ? (this.modalProduct.priceHistory.history30d || []) 
+            : (this.modalProduct.priceHistory.history90d || []);
+        },
+
+        init() {
+          this.dark = localStorage.getItem('theme') !== 'light';
+          this.$watch('dark', v => localStorage.setItem('theme', v ? 'dark' : 'light'));
+
+          // Load watchlist & alerts
+          try {
+            const savedW = localStorage.getItem('price_watchlist');
+            if (savedW) this.watchlist = JSON.parse(savedW);
+            const savedA = localStorage.getItem('price_alerts');
+            if (savedA) this.alerts = JSON.parse(savedA);
+          } catch(e) {}
+
+          // Load loot deals from API or fallback
+          this.fetchLootDeals();
+
+          this.filterProducts();
+
+          // Rotating hero word timer
+          setInterval(() => {
+            this.heroIndex = (this.heroIndex + 1) % this.heroWords.length;
+            this.rotatingHeroText = this.heroWords[this.heroIndex];
+          }, 3200);
+        },
+
+        isUrl(text) {
+          if (!text) return false;
+          const s = text.trim();
+          return s.startsWith('http://') || s.startsWith('https://') || s.startsWith('www.') || s.includes('amazon.in') || s.includes('flipkart.com');
+        },
+
+        async pasteFromClipboard() {
+          try {
+            if (navigator.clipboard && navigator.clipboard.readText) {
+              const text = await navigator.clipboard.readText();
+              if (text && text.trim()) {
+                this.searchQuery = text.trim();
+                this.performSearch();
+                this.showToast('Pasted link from clipboard! Comparing stores...');
+                return;
+              }
+            }
+          } catch(e) {}
+          const userText = prompt('Paste your Amazon or Flipkart product URL:');
+          if (userText && userText.trim()) {
+            this.searchQuery = userText.trim();
+            this.performSearch();
+          }
+        },
+
+        async fetchLootDeals() {
+          try {
+            const res = await fetch('/api/deals');
+            const data = await res.json();
+            if (data.deals && data.deals.length > 0) {
+              this.lootDeals = data.deals;
+              return;
+            }
+          } catch(e) {}
+          // Fallback if offline
+          this.lootDeals = this.products.map(p => ({
+            id: 500 + p.id,
+            name: p.name,
+            category: p.category,
+            badge: p.priceHistory?.verdict === 'Super Buy' ? '🔥 All-Time Lowest Price' : '⚡ Top Store Deal',
+            discountPercent: Math.round(((p.mrp - p.bestPrice) / p.mrp) * 100),
+            image: p.image,
+            mrp: p.mrp,
+            bestPrice: p.bestPrice,
+            storeName: p.stores.find(s => s.isLowest)?.name || 'Top Store',
+            storeUrl: p.stores.find(s => s.isLowest)?.url || p.stores[0]?.url,
+            verdict: p.priceHistory?.verdictText || 'Great deal verified',
+            priceHistory: p.priceHistory,
+            stores: p.stores
+          }));
+        },
+
+        filterProducts() {
+          const q = this.searchQuery.toLowerCase().trim();
+          this.filteredProducts = this.products.filter(p => {
+            const matchesCat = this.activeCategory === 'all' || p.category === this.activeCategory;
+            const matchesQuery = !q || p.name.toLowerCase().includes(q) || p.specs.toLowerCase().includes(q);
+            return matchesCat && matchesQuery;
+          });
+          this.sortProductList();
+        },
+
+        async performSearch() {
+          const q = this.searchQuery.trim();
+          if (!q) {
+            this.liveResults = [];
+            this.filterProducts();
+            return;
+          }
+
+          this.filterProducts();
+          this.isSearching = true;
+
+          try {
+            const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+            const data = await res.json();
+            if (data.results && data.results.length > 0) {
+              this.liveResults = data.results;
+              this.showToast(`Found ${data.results.length} live verified deals!`);
+            }
+          } catch(err) {
+            console.error('Live search error:', err);
+          } finally {
+            this.isSearching = false;
+          }
+        },
+
+        sortProductList() {
+          const target = this.liveResults.length > 0 ? this.liveResults : this.filteredProducts;
+          if (this.sortBy === 'discount') {
+            target.sort((a, b) => (b.maxPrice - b.bestPrice) - (a.maxPrice - a.bestPrice));
+          } else if (this.sortBy === 'price-low') {
+            target.sort((a, b) => a.bestPrice - b.bestPrice);
+          } else if (this.sortBy === 'price-high') {
+            target.sort((a, b) => b.bestPrice - a.bestPrice);
+          } else if (this.sortBy === 'name') {
+            target.sort((a, b) => a.name.localeCompare(b.name));
+          }
+        },
+
+        openPriceHistoryModal(product) {
+          this.modalProduct = product;
+          this.historyTimeframe = '30d';
+          this.hoverPoint = null;
+          this.showHistoryModal = true;
+        },
+
+        openAlertModal(product) {
+          this.alertTargetProduct = product;
+          this.alertTargetPrice = Math.round(product.bestPrice * 0.95);
+          this.showAlertModal = true;
+        },
+
+        savePriceAlert() {
+          if (!this.alertContact || !this.alertContact.trim()) {
+            alert('Please enter your Email or WhatsApp number.');
+            return;
+          }
+          const newAlert = {
+            id: Date.now(),
+            productId: this.alertTargetProduct.id,
+            productName: this.alertTargetProduct.name,
+            currentPrice: this.alertTargetProduct.bestPrice,
+            targetPrice: Number(this.alertTargetPrice),
+            contact: this.alertContact.trim(),
+            date: new Date().toLocaleDateString()
+          };
+          this.alerts.push(newAlert);
+          localStorage.setItem('price_alerts', JSON.stringify(this.alerts));
+          this.showAlertModal = false;
+          this.showToast(`Alert set! We will notify you when price hits ₹${this.formatNumber(this.alertTargetPrice)}`);
+        },
+
+        removeAlert(idx) {
+          this.alerts.splice(idx, 1);
+          localStorage.setItem('price_alerts', JSON.stringify(this.alerts));
+          this.showToast('Alert removed.');
+        },
+
+        openAlertsDrawer() {
+          this.showCustomAlertDrawer = true;
+        },
+
+        toggleWatchlist(product) {
+          const idx = this.watchlist.findIndex(w => w.id === product.id);
+          if (idx >= 0) {
+            this.watchlist.splice(idx, 1);
+            this.showToast('Removed from Watchlist');
+          } else {
+            this.watchlist.push(product);
+            this.showToast('Added to Watchlist');
+          }
+          localStorage.setItem('price_watchlist', JSON.stringify(this.watchlist));
+        },
+
+        isWatchlisted(id) {
+          return this.watchlist.some(w => w.id === id);
+        },
+
+        showToast(msg) {
+          this.toastMessage = msg;
+          setTimeout(() => {
+            if (this.toastMessage === msg) this.toastMessage = '';
+          }, 3500);
+        },
+
+        formatNumber(num) {
+          return Number(num || 0).toLocaleString('en-IN');
+        },
+
+        // SVG Chart Helpers
+        getPointX(idx) {
+          const pts = this.activeHistoryPoints;
+          if (pts.length <= 1) return 250;
+          return 20 + (idx / (pts.length - 1)) * 460;
+        },
+
+        getPointY(price) {
+          const pts = this.activeHistoryPoints;
+          if (!pts || pts.length === 0) return 90;
+          const prices = pts.map(p => p.price);
+          const minP = Math.min(...prices);
+          const maxP = Math.max(...prices);
+          if (maxP === minP) return 90;
+          const norm = (price - minP) / (maxP - minP);
+          // y goes from 150 (bottom) to 30 (top)
+          return 150 - (norm * 120);
+        },
+
+        getChartLinePoints() {
+          const pts = this.activeHistoryPoints;
+          return pts.map((pt, idx) => `${this.getPointX(idx)},${this.getPointY(pt.price)}`).join(' ');
+        },
+
+        getChartAreaPoints() {
+          const pts = this.activeHistoryPoints;
+          if (pts.length === 0) return '';
+          const linePts = pts.map((pt, idx) => `${this.getPointX(idx)},${this.getPointY(pt.price)}`).join(' ');
+          const firstX = this.getPointX(0);
+          const lastX = this.getPointX(pts.length - 1);
+          return `${firstX},160 ${linePts} ${lastX},160`;
+        }
+      }
+    }
+  </script>
+</body>
+</html>

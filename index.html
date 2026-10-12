@@ -17,6 +17,12 @@
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23FF6B2B' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'><rect x='20' y='20' width='60' height='60' rx='12' transform='rotate(45 50 50)' /><path d='M35 63 L50 36 L65 63 M40 53h20' /></svg>">
 
+  <script>
+    if (window.location.pathname.endsWith('.html')) {
+      var cleanUrl = window.location.pathname.replace(/\.html$/, '') + window.location.search + window.location.hash;
+      window.history.replaceState(null, '', cleanUrl);
+    }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <!-- Lenis for smooth scrolling -->
@@ -701,7 +707,7 @@
             <h2 class="text-accent reveal d1 font-display font-bold text-3xl sm:text-4xl md:text-5xl ">Selected
               work</h2>
           </div>
-          <a href="projects.html"
+          <a href="projects"
             class="hover:scale-105 transition-all duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] reveal d1 text-sm font-medium text-black dark:text-white hover:text-accent self-start sm:self-auto nl">All
             projects →</a>
         </div>
@@ -783,10 +789,10 @@
 
           <article
             class="reveal d4 mirror-card group rounded-3xl overflow-hidden">
-            <div class="pf w-full h-56 project-mirror-img overflow-hidden">
+            <a href="sastakhareedo" target="_blank" rel="noopener noreferrer" class="block pf w-full h-56 overflow-hidden project-mirror-img">
               <img src="assets/images/price-comparison.jpg"
-                alt="Price Comparison Live Web App" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-            </div>
+                alt="SastaKhareedo — Price Comparison & Deals" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            </a>
             <div class="p-6">
               <div class="flex flex-wrap items-center gap-2 mb-3">
                 <span

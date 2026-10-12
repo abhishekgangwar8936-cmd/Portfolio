@@ -610,12 +610,23 @@ class PortfolioAPIHandler(http.server.SimpleHTTPRequestHandler):
 
         try:
             # Clean URL rewrites
-            if parsed.path in ('/sastakhareedo', '/sasta-khareedo', '/price-comparison', '/price-comparison.html'):
-                self.path = '/sastakhareedo.html'
-            elif parsed.path == '/todo':
-                self.path = '/todo.html'
-            elif parsed.path == '/projects':
-                self.path = '/projects.html'
+            clean_map = {
+                '/sastakhareedo': '/sastakhareedo.html',
+                '/sastakhareedo/': '/sastakhareedo/index.html',
+                '/sasta-khareedo': '/sastakhareedo.html',
+                '/price-comparison': '/sastakhareedo.html',
+                '/price-comparison.html': '/sastakhareedo.html',
+                '/todo': '/todo.html',
+                '/todo/': '/todo/index.html',
+                '/projects': '/projects.html',
+                '/projects/': '/projects.html',
+                '/blog': '/blog.html',
+                '/blog/': '/blog.html',
+                '/blog-article': '/blog-article.html',
+                '/blog-article/': '/blog-article.html',
+            }
+            if parsed.path in clean_map:
+                self.path = clean_map[parsed.path]
 
             return super().do_GET()
         except Exception as e:
