@@ -10,24 +10,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <script>
-    // Smart auto-redirect for case-sensitive GitHub Pages URLs
+    // Smart auto-redirect: strip legacy /portfolio/ or /Portfolio/ prefix
     (function() {
       var path = window.location.pathname;
       var search = window.location.search || '';
       var hash = window.location.hash || '';
 
-      // Fix lowercase /portfolio/ -> /Portfolio/
+      // If user visited via legacy /portfolio or /Portfolio prefix, remove it and redirect cleanly
       if (path.toLowerCase().startsWith('/portfolio')) {
-        var correctedPath = path.replace(/^\/portfolio/i, '/Portfolio');
-        if (correctedPath !== path) {
-          window.location.replace(correctedPath + search + hash);
-          return;
-        }
-      }
-
-      // If user landed at root / without repository prefix
-      if (path === '/' || path === '') {
-        window.location.replace('/Portfolio/' + search + hash);
+        var cleanPath = path.replace(/^\/portfolio\/?/i, '/');
+        if (!cleanPath.startsWith('/')) cleanPath = '/' + cleanPath;
+        window.location.replace(cleanPath + search + hash);
         return;
       }
     })();
@@ -64,20 +57,20 @@
     <h1 class="text-6xl font-bold tracking-tight text-[#FF6B2B] mb-2 font-display">404</h1>
     <h2 class="text-xl font-bold mb-3 text-white">Page Not Found</h2>
     <p class="text-sm text-zinc-400 mb-8 leading-relaxed">
-      The link you followed might have an incorrect case or does not exist. Choose where you want to go:
+      The link you followed does not exist. Choose where you want to go:
     </p>
 
     <div class="flex flex-col gap-3">
-      <a href="/Portfolio/" class="w-full py-3 px-4 rounded-xl bg-[#FF6B2B] hover:bg-[#FF8F5C] text-white font-medium text-sm transition-all duration-200 shadow-lg shadow-[#FF6B2B]/20 flex items-center justify-center gap-2">
-        <span>Portfolio Home</span> →
+      <a href="./" class="w-full py-3 px-4 rounded-xl bg-[#FF6B2B] hover:bg-[#FF8F5C] text-white font-medium text-sm transition-all duration-200 shadow-lg shadow-[#FF6B2B]/20 flex items-center justify-center gap-2">
+        <span>Home</span> →
       </a>
-      <a href="/Portfolio/todo" class="w-full py-3 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2">
+      <a href="todo" class="w-full py-3 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2">
         <span>📝 My Todo App</span>
       </a>
-      <a href="/Portfolio/sastakhareedo" class="w-full py-3 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2">
+      <a href="sastakhareedo" class="w-full py-3 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2">
         <span>🛒 SastaKhareedo Tracker</span>
       </a>
-      <a href="/Portfolio/projects" class="w-full py-3 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2">
+      <a href="projects" class="w-full py-3 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2">
         <span>📂 All Projects</span>
       </a>
     </div>
