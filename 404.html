@@ -10,17 +10,36 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <script>
-    // Smart auto-redirect: strip legacy /portfolio/ or /Portfolio/ prefix
+    // Smart auto-router for clean extensionless URLs and legacy path normalization
     (function() {
-      var path = window.location.pathname;
+      var fullPath = window.location.pathname;
       var search = window.location.search || '';
       var hash = window.location.hash || '';
 
-      // If user visited via legacy /portfolio or /Portfolio prefix, remove it and redirect cleanly
-      if (path.toLowerCase().startsWith('/portfolio')) {
-        var cleanPath = path.replace(/^\/portfolio\/?/i, '/');
-        if (!cleanPath.startsWith('/')) cleanPath = '/' + cleanPath;
-        window.location.replace(cleanPath + search + hash);
+      // Check whether running under /Portfolio/ (subpath) or root /
+      var isSubpath = fullPath.toLowerCase().startsWith('/portfolio');
+      var cleanSubpath = fullPath;
+      if (isSubpath) {
+        cleanSubpath = fullPath.replace(/^\/portfolio\/?/i, '/');
+        if (!cleanSubpath.startsWith('/')) cleanSubpath = '/' + cleanSubpath;
+      }
+
+      var routeKey = cleanSubpath.replace(/^\/+|\/+$/g, '').toLowerCase();
+
+      var routes = {
+        '': 'index.html',
+        'todo': 'todo.html',
+        'sastakhareedo': 'sastakhareedo.html',
+        'sasta-khareedo': 'sastakhareedo.html',
+        'price-comparison': 'sastakhareedo.html',
+        'projects': 'projects.html',
+        'blog': 'blog.html',
+        'blog-article': 'blog-article.html'
+      };
+
+      if (routes.hasOwnProperty(routeKey)) {
+        var prefix = isSubpath ? '/Portfolio/' : '/';
+        window.location.replace(prefix + routes[routeKey] + search + hash);
         return;
       }
     })();
