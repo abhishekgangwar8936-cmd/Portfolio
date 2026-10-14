@@ -618,6 +618,8 @@ class PortfolioAPIHandler(http.server.SimpleHTTPRequestHandler):
                 '/price-comparison.html': '/sastakhareedo.html',
                 '/todo': '/todo.html',
                 '/todo/': '/todo/index.html',
+                '/print-secure': '/print-secure.html',
+                '/print-secure/': '/print-secure/index.html',
                 '/projects': '/projects.html',
                 '/projects/': '/projects.html',
                 '/blog': '/blog.html',
